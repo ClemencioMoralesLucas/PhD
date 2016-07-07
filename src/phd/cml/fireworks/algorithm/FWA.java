@@ -6,6 +6,7 @@ package phd.cml.fireworks.algorithm;
 public class FWA {
 
     public static void main(String [] args){
-        //TODO
+        //TODO Algorithm implementation in http://www.cil.pku.edu.cn/research/fa/
+
     }
 }
