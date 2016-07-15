@@ -28,4 +28,12 @@ public class Coordinate {
     public void setX(int x) {
         this.x = x;
     }
+
+    @Override
+    public String toString() {
+        return "Coordinate{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

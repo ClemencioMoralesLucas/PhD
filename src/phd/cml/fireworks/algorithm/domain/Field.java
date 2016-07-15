@@ -5,17 +5,17 @@ package phd.cml.fireworks.algorithm.domain;
  */
 public class Field {
 
-    private Location[] field;
+    private Location[][] locations;
 
-    public Field(Location[] locations){
-        this.setField(locations);
+    public Field(Location[][] locations){
+        this.setLocations(locations);
     }
 
-    public Location[] getField() {
-        return field;
+    public Location[][] getLocations() {
+        return locations;
     }
 
-    public void setField(Location[] field) {
-        this.field = field;
+    public void setLocations(Location[][] locations) {
+        this.locations = locations;
     }
 }

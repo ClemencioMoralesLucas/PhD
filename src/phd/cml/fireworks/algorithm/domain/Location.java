@@ -17,6 +17,14 @@ public class Location {
         this.setOptimal(false);
     }
 
+    public Location(final Coordinate coordinate, final Spark spark,
+                    final Firework firework, final boolean optimal){
+        this.setCoordinate(coordinate);
+        this.setSpark(spark);
+        this.setFirework(firework);
+        this.setOptimal(optimal);
+    }
+
     public Coordinate getCoordinate() {
         return coordinate;
     }
@@ -47,5 +55,15 @@ public class Location {
 
     public void setSpark(Spark spark) {
         this.spark = spark;
+    }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "coordinate=" + coordinate +
+                ", spark=" + spark +
+                ", firework=" + firework +
+                ", optimal=" + optimal +
+                '}';
     }
 }
