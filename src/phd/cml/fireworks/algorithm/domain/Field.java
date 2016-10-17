@@ -1,7 +1,9 @@
 package phd.cml.fireworks.algorithm.domain;
 
+import java.util.Arrays;
+
 /**
- * Created by Clemencio Morales Lucas on 07/07/2016.
+ * Created by Clemencio Morales Lucas
  */
 public class Field {
 
@@ -17,5 +19,27 @@ public class Field {
 
     public void setLocations(Location[][] locations) {
         this.locations = locations;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Field field = (Field) o;
+
+        return Arrays.deepEquals(locations, field.locations);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(locations);
+    }
+
+    @Override
+    public String toString() {
+        return "Field{" +
+                "locations=" + Arrays.toString(locations) +
+                '}';
     }
 }

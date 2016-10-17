@@ -1,7 +1,7 @@
 package phd.cml.fireworks.algorithm.domain;
 
 /**
- * Created by Clemencio Morales Lucas on 07/07/2016.
+ * Created by Clemencio Morales Lucas
  */
 public class Location {
 
@@ -65,5 +65,28 @@ public class Location {
                 ", firework=" + firework +
                 ", optimal=" + optimal +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Location location = (Location) o;
+
+        if (optimal != location.optimal) return false;
+        if (!coordinate.equals(location.coordinate)) return false;
+        if (!spark.equals(location.spark)) return false;
+        return firework.equals(location.firework);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = coordinate.hashCode();
+        result = 31 * result + spark.hashCode();
+        result = 31 * result + firework.hashCode();
+        result = 31 * result + (optimal ? 1 : 0);
+        return result;
     }
 }

@@ -1,9 +1,9 @@
 package phd.cml.fireworks.algorithm.domain;
 
-import java.util.Random;
+import phd.cml.fireworks.algorithm.utils.FireworksAlgorithmUtils;
 
 /**
- * Created by Clemencio Morales Lucas on 07/07/2016.
+ * Created by Clemencio Morales Lucas
  */
 public class Scenario {
 
@@ -20,19 +20,15 @@ public class Scenario {
             }
         }
         //An optimal coordinate is created representing the objective point
-        this.getField().getLocations()[this.generateRandomValue(width)][this.generateRandomValue(width)].setOptimal(true);
+        this.getField().getLocations()
+                [FireworksAlgorithmUtils.generateRandomValue(width)]
+                [FireworksAlgorithmUtils.generateRandomValue(width)].setOptimal(true);
     }
 
     private Location createRandomCoordinate(final int maxBound) {
-        int x = generateRandomValue(maxBound);
-        int y = generateRandomValue(maxBound);
+        int x = FireworksAlgorithmUtils.generateRandomValue(maxBound);
+        int y = FireworksAlgorithmUtils.generateRandomValue(maxBound);
         return new Location(new Coordinate(x, y));
-
-    }
-
-    //TODO Move to utils.class
-    private int generateRandomValue(final int maxBound){
-        return new Random().nextInt(maxBound);
     }
 
     public Field getField() {
