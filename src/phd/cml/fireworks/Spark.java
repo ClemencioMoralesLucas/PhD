@@ -1,0 +1,53 @@
+package phd.cml.fireworks;
+
+/**
+ * Created by Clemencio Morales Lucas.
+ */
+public class Spark {
+
+	private double [] position;
+	private boolean evaluated;
+	private double value;
+
+	public Spark() {
+		this.setEvaluated(false);
+	}
+
+	public double[] getPosition() {
+		return this.position;
+	}
+
+	public void setPosition(final double [] receivedPosition) {
+		this.position = new double [receivedPosition.length];
+		for (int i = 0; i < receivedPosition.length; i++) {
+			this.setPositionAtIndex(i, receivedPosition[i]);
+		}
+		this.setEvaluated(false);
+	}
+
+	public void setPositionAtIndex(final int index, final double value){
+		this.getPosition()[index] = value;
+	}
+
+	public boolean isEvaluated() {
+		return this.evaluated;
+	}
+
+	public void setEvaluated(final boolean evaluated) {
+		this.evaluated = evaluated;
+	}
+
+	public double getValue(final BenchmarkFunction function) {
+		if(!evaluated) {
+			this.setEvaluated(true);
+			value = function.getBenchmarkingFunctionValue(position);
+			return value;
+		} else {
+			return value;
+		}
+	}
+
+	public void setValue(final double value) {
+		this.value = value;
+	}
+}
