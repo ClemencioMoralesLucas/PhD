@@ -66,7 +66,8 @@ public class BenchmarkFunction implements BenchmarkFunctionConstants {
 			case 11:
 				result = axisParallelFunction(inputValues);
 				break;
-			case 12:
+			//TODO Refactor these functions to subclasses of BenchmarkFunction, thus making this last one abstract
+			case NUMBER_OF_FUNCTIONS: //Defines the number of benchmark functions.
 				result = rotatedHyperEllipsoidFunction(inputValues);
 				break;
 			default:

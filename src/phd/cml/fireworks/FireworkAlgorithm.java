@@ -56,7 +56,7 @@ public class FireworkAlgorithm {
         this.benchmarkFunction = benchmarkFunction;
     }
 
-    public double fireworksAlgorithmFramework() {
+    public double launch() {
         selectNInitialLocations();
         while (!stopCriteria()) {
             setOffNFireworks();

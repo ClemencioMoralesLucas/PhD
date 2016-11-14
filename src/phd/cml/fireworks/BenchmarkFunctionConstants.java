@@ -5,6 +5,7 @@ package phd.cml.fireworks;
  */
 public interface BenchmarkFunctionConstants {
 
+    int NUMBER_OF_FUNCTIONS = 12;
     int SQUARE_VALUE = 2;
     int ONE_HUNDRED = 100;
     double DOUBLE_SQUARE_VALUE = 2.0;
