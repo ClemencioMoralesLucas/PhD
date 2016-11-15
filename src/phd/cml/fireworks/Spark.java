@@ -1,5 +1,7 @@
 package phd.cml.fireworks;
 
+import java.util.Arrays;
+
 /**
  * Created by Clemencio Morales Lucas.
  */
@@ -49,5 +51,38 @@ public class Spark {
 
 	public void setValue(final double value) {
 		this.value = value;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Spark spark = (Spark) o;
+
+		if (evaluated != spark.evaluated) return false;
+		if (Double.compare(spark.value, value) != 0) return false;
+		return Arrays.equals(position, spark.position);
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result;
+		long temp;
+		result = Arrays.hashCode(position);
+		result = 31 * result + (evaluated ? 1 : 0);
+		temp = Double.doubleToLongBits(value);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "Spark{" +
+				"position=" + Arrays.toString(position) +
+				", evaluated=" + evaluated +
+				", value=" + value +
+				'}';
 	}
 }
