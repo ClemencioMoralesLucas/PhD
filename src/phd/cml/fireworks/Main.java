@@ -5,7 +5,7 @@ package phd.cml.fireworks;
  */
 public class Main {
 
-    //	public static final String INFORMATION_FILE_PATH_WINDOWS = "D:\\FA_info.txt";
+    public static final String INFORMATION_FILE_PATH_WINDOWS = "D:\\FA_info.txt";
     public static final String INFORMATION_FILE_PATH_UNIX = "/home/clemen/FA_info.txt";
     public static final int NUMBER_OF_ITERATIONS = 20;
     public static final int LOCATIONS_NUMBER = 5;
@@ -18,16 +18,19 @@ public class Main {
     public static final String SHIFT = "|Shift ";
     public static final String SEPARATOR = "|\t";
     public static final String FITNESS = "|Fitness ";
+    public enum HostSystem { WINDOWS, UNIX }
 
     private double[] maximumBound;//= new double [30];
     private double[] minimumBound;//= new double [30];
     private final double[] shiftIndex = {0, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7};
     private double[] availableBounds = {100, 100, 30, 32, 600, 5.12, 50, 5, 2, 100, 5.12, 65.536};
     private int[] availableDimensions = {30, 30, 30, 30, 30, 30, 30, 2, 2, 2, 30, 30};
+    private String filePath;
 
     public Main() {}
 
-    public void launch() {
+    public void launch(final HostSystem hostSystem) {
+        filePath = hostSystem.equals(HostSystem.UNIX) ? INFORMATION_FILE_PATH_UNIX : INFORMATION_FILE_PATH_WINDOWS;
         printHeader();
         launchFWAForAllParameters();
     }
@@ -48,7 +51,7 @@ public class Main {
                 for (int t = 0; t < NUMBER_OF_ITERATIONS; t++) {
                     FireworkAlgorithm fireworkAlgorithm = new FireworkAlgorithm(LOCATIONS_NUMBER, NUMBER_OF_SPARKS,
                             LOW_BOUND_NUMBER, HIGH_BOUND_NUMBER, MAXIMUM_AMPLITUDE_VALUE, GAUSSIAN_SPARKS_VALUE,
-                            maximumBound, minimumBound, INFORMATION_FILE_PATH_UNIX, benchmarkFunction);
+                            maximumBound, minimumBound, filePath, benchmarkFunction);
                     avg += fireworkAlgorithm.launch();
                 }
                 avg /= NUMBER_OF_ITERATIONS;
@@ -68,6 +71,6 @@ public class Main {
 
     public static void main(String[] args) {
         //TODO Find a way of reformatting the table
-        new Main().launch();
+        new Main().launch(HostSystem.UNIX);
     }
 }
