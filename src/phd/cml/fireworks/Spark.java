@@ -61,8 +61,7 @@ public class Spark {
 		Spark spark = (Spark) o;
 
 		if (evaluated != spark.evaluated) return false;
-		if (Double.compare(spark.value, value) != 0) return false;
-		return Arrays.equals(position, spark.position);
+		return Double.compare(spark.value, value) == 0 && Arrays.equals(position, spark.position);
 
 	}
 

@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Random;
 /**
  * Created by Clemencio Morales Lucas.
@@ -20,6 +21,8 @@ public class FireworkAlgorithm {
     private static final String BEST_VALUE_FOUND = "Best value found ==> ";
     private static final String BEST_POSITION_FOUND = "best position found ==> ";
     private static final String SEPARATOR = "---------------------------------------------------------";
+    private static final String OUTPUT_FILE_NOT_FOUND_IN_PATH = ": Output file not found in:";
+    public static final int NUMBER_OF_FUNCTION_EVALUATIONS = 30;
 
     private Spark[] fireworks;
     private Spark[][] sparks;
@@ -101,82 +104,22 @@ public class FireworkAlgorithm {
             sumMinDiff += fireworks[i].getValue(benchmarkFunction) - minimumValue;
         }
 
-        //get number of sparks for all fireworks
         int[] sparksNumber = new int[locationsNumber];
-        double temporalCoefficient;
-        for (i = 0; i < locationsNumber; i++) {
-            temporalCoefficient = (maximumValue - fireworks[i].getValue(benchmarkFunction) + EPS_VALUE) / (sumMaxDiff + EPS_VALUE);
-            if (temporalCoefficient < lowBound) {
-                temporalCoefficient = lowBound;
-            }
-            if (temporalCoefficient > highBound) {
-                temporalCoefficient = highBound;
-            }
-            sparksNumber[i] = (int) (maximumSparksNumber * temporalCoefficient);
-        }
-
-        //get amplitude of explosion for all fireworks
+        getNumberOfSparksForAllFireworks(maximumValue, sumMaxDiff, sparksNumber);
 
         double explosionAmplitude[] = new double[locationsNumber];
-        for (i = 0; i < locationsNumber; i++) {
-            explosionAmplitude[i] = (fireworks[i].getValue(benchmarkFunction) - minimumValue + EPS_VALUE) / (sumMinDiff + EPS_VALUE) * maximumAmplitudeNumber;
-        }
-
-        //generate sparks for all fireworks
+        getExplosionAmplitudeForAllFireworks(minimumValue, sumMinDiff, explosionAmplitude);
 
         sparks = new Spark[locationsNumber][];
-        double[] temporalPosition = new double[dimension], fireworkPosition;
-        boolean [] randomFlag;
-        Random random;
-        int explosionDirectionsNumber, randomCount, temporaryRandom;
-        for (i = 0; i < locationsNumber; i++) {
-            sparks[i] = new Spark[sparksNumber[i]];
-            fireworkPosition = fireworks[i].getPosition();
-            for (int k = 0; k < sparksNumber[i]; k++) {
-                sparks[i][k] = new Spark();
-                //select z directions
-                random = new Random();
-                randomFlag = new boolean[dimension];
-                int j;
-                for (j = 0; j < dimension; j++) {
-                    randomFlag[j] = false;
-                }
-                explosionDirectionsNumber = (int) (dimension * Math.random());
-                randomCount = 0;
-                while (randomCount < explosionDirectionsNumber) {
-                    temporaryRandom = random.nextInt(dimension);
-                    if (!randomFlag[temporaryRandom]) {
-                        randomFlag[temporaryRandom] = true;
-                        randomCount++;
-                    }
-                }
+        double[] temporalPosition = generateSparksForAllFireworks(sparksNumber, explosionAmplitude);
 
-                //explode
-                double displacementRatio = explosionAmplitude[i] * (Math.random() - HALF) * DOUBLE_COEFFICIENT;
-                for (j = 0; j < dimension; j++) {
-                    if (randomFlag[j]) {
-                        temporalPosition[j] = fireworkPosition[j] + displacementRatio;
-                        //out of bound
-                        if (temporalPosition[j] < minimalBound[j] || temporalPosition[j] > maximumBound[j]) {
-                            double absolutePosition = Math.abs(temporalPosition[j]);
-                            while (absolutePosition >= 0) {
-                                absolutePosition -= (maximumBound[j] - minimalBound[j]);
-                            }
-                            absolutePosition += (maximumBound[j] - minimalBound[j]);
-                            temporalPosition[j] = minimalBound[j] + absolutePosition;
-                        }
-                    } else {
-                        temporalPosition[j] = fireworkPosition[j];
-                    }
-                }
-                //set position of the spark
-                sparks[i][k].setPosition(temporalPosition);
-            }
-        }
-
-        //TODO Snippet to refactor as long as it has code which is almost a duplication
-        //gaussian explode
         gaussianSparks = new Spark[gaussianSparksNumber];
+        gaussianExplode(temporalPosition);
+    }
+
+    private void gaussianExplode(double[] temporalPosition) {
+        int i;
+        double[] fireworkPosition;
         int k, j;
         Random rand;
         for (k = 0; k < gaussianSparksNumber; k++) {
@@ -187,27 +130,24 @@ public class FireworkAlgorithm {
             fireworkPosition = fireworks[i].getPosition();
             //select z directions
             boolean[] randFlag = new boolean[dimension];
-            for (j = 0; j < dimension; j++) {
-                randFlag[j] = false;
-            }
+            Arrays.fill(randFlag, false);
+
             int numExplosionDirections = (int) (dimension * Math.random());
-            int randomcount = 0;
-            int tmprand;
-            while (randomcount < numExplosionDirections) {
-                tmprand = Math.abs(rand.nextInt()) % dimension;
-                if (!randFlag[tmprand]) {
-                    randFlag[tmprand] = true;
-                    randomcount++;
+            int randomCount = 0;
+            int temporaryRandom;
+            while (randomCount < numExplosionDirections) {
+                temporaryRandom = Math.abs(rand.nextInt()) % dimension;
+                if (!randFlag[temporaryRandom]) {
+                    randFlag[temporaryRandom] = true;
+                    randomCount++;
                 }
             }
 
-            //TODO Snippet to refactor as long as it has code which is almost a duplication (is similar to the last explode and could be refactored)
-            //explode
+            //Gaussian Explosion (different explode)
             double gaussianCoefficient = GAUSSIAN_COEFFICIENT_BASE + rand.nextGaussian();
             for (j = 0; j < dimension; j++) {
                 if (randFlag[j]) {
                     temporalPosition[j] = fireworkPosition[j] * gaussianCoefficient;
-                    //out of bound
                     if (temporalPosition[j] < minimalBound[j] || temporalPosition[j] > maximumBound[j]) {
                         double abspos = Math.abs(temporalPosition[j]);
                         while (abspos >= 0) {
@@ -220,121 +160,101 @@ public class FireworkAlgorithm {
                     temporalPosition[j] = fireworkPosition[j];
                 }
             }
-            //set position of the spark
             gaussianSparks[k].setPosition(temporalPosition);
         }
     }
 
-    //select n locations
-    private void selectNLocations() {
-        //select the best location
-        Spark bestSpark = fireworks[0];
-        int i, j, k;
-        for (i = 1; i < locationsNumber; i++) {
-            if (fireworks[i].getValue(benchmarkFunction) < bestSpark.getValue(benchmarkFunction)) {
-                bestSpark = fireworks[i];
-            }
-        }
+    private double[] generateSparksForAllFireworks(int[] sparksNumber, double[] explosionAmplitude) {
+        int i;
+        double[] temporalPosition = new double[dimension], fireworkPosition;
+        boolean [] randomFlag;
+        Random random;
+        int explosionDirectionsNumber, randomCount, temporaryRandom;
         for (i = 0; i < locationsNumber; i++) {
-            for (j = 0; j < sparks[i].length; j++) {
-                if (sparks[i][j].getValue(benchmarkFunction) < bestSpark.getValue(benchmarkFunction)) {
-                    bestSpark = sparks[i][j];
+            sparks[i] = new Spark[sparksNumber[i]];
+            fireworkPosition = fireworks[i].getPosition();
+            for (int k = 0; k < sparksNumber[i]; k++) {
+                sparks[i][k] = new Spark();
+                //select z directions
+                random = new Random();
+                randomFlag = new boolean[dimension];
+                Arrays.fill(randomFlag, false);
+                explosionDirectionsNumber = (int) (dimension * Math.random());
+                randomCount = 0;
+                while (randomCount < explosionDirectionsNumber) {
+                    temporaryRandom = random.nextInt(dimension);
+                    if (!randomFlag[temporaryRandom]) {
+                        randomFlag[temporaryRandom] = true;
+                        randomCount++;
+                    }
                 }
+                //explode
+                explode(explosionAmplitude[i], temporalPosition, fireworkPosition, randomFlag);
+                //set position of the spark
+                sparks[i][k].setPosition(temporalPosition);
             }
         }
-        for (i = 0; i < gaussianSparksNumber; i++) {
-            if (gaussianSparks[i].getValue(benchmarkFunction) < bestSpark.getValue(benchmarkFunction)) {
-                bestSpark = gaussianSparks[i];
-            }
-        }
-        optimumValue = bestSpark.getValue(benchmarkFunction);
+        return temporalPosition;
+    }
 
-        //output the best value
-        PrintStream printStream = null;
-        try {
-            printStream = new PrintStream(new FileOutputStream(infoFilePath, true));
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
-        printStream.println(BEST_VALUE_FOUND + (1 - optimumValue));
-//        printStream.println(BEST_POSITION_FOUND + bestSpark.getPosition().toString());
-        printStream.println(BEST_POSITION_FOUND + Arrays.toString(bestSpark.getPosition()));
-        printStream.println(SEPARATOR);
-        printStream.close();
-
-        //select the rest n-1 locations
-        //count the number of fireworks and sparks
-        int fireworkSparksNumber = locationsNumber + gaussianSparksNumber;
-        for (i = 0; i < locationsNumber; i++) {
-            for (j = 0; j < sparks[i].length; j++) {
-                fireworkSparksNumber++;
-            }
-        }
-
-        //calculate the number of function evaluations
-        numFunctionEvaluations += fireworkSparksNumber;
-
-        //put all the fireworks and sparks in an array
-        double[][] fireworkAndSparksPositions = new double[fireworkSparksNumber][];
-        int index = 0;
-        for (i = 0; i < locationsNumber; i++) {
-            fireworkAndSparksPositions[index] = fireworks[i].getPosition();
-            index++;
-        }
-        for (i = 0; i < locationsNumber; i++) {
-            for (j = 0; j < sparks[i].length; j++) {
-                fireworkAndSparksPositions[index] = sparks[i][j].getPosition();
-                index++;
-            }
-        }
-        for (i = 0; i < gaussianSparksNumber; i++) {
-            fireworkAndSparksPositions[index] = gaussianSparks[i].getPosition();
-            index++;
-        }
-
-        //calculate the selection probability of each location
-        double[] probabilityOfSelection = new double[fireworkSparksNumber];
-        double sumOfProbability = 0, auxDistance;
-        for (i = 0; i < fireworkSparksNumber; i++) {
-            probabilityOfSelection[i] = 0;
-            for (j = 0; j < fireworkSparksNumber; j++) {
-                auxDistance = 0;
-                for (k = 0; k < dimension; k++) {
-                    auxDistance += (fireworkAndSparksPositions[i][k] - fireworkAndSparksPositions[j][k]) *
-                            (fireworkAndSparksPositions[i][k] - fireworkAndSparksPositions[j][k]);
+    private void explode(double v, double[] temporalPosition, double[] fireworkPosition, boolean[] randomFlag) {
+        int j;
+        double displacementRatio = v * (Math.random() - HALF) * DOUBLE_COEFFICIENT;
+        for (j = 0; j < dimension; j++) {
+            if (randomFlag[j]) {
+                temporalPosition[j] = fireworkPosition[j] + displacementRatio;
+                if (temporalPosition[j] < minimalBound[j] || temporalPosition[j] > maximumBound[j]) {
+                    double absolutePosition = Math.abs(temporalPosition[j]);
+                    while (absolutePosition >= 0) {
+                        absolutePosition -= (maximumBound[j] - minimalBound[j]);
+                    }
+                    absolutePosition += (maximumBound[j] - minimalBound[j]);
+                    temporalPosition[j] = minimalBound[j] + absolutePosition;
                 }
-                probabilityOfSelection[i] += Math.sqrt(auxDistance);
-            }
-            sumOfProbability += probabilityOfSelection[i];
-        }
-
-        double[] cumulativeProbability = new double[fireworkSparksNumber];
-        for (i = 0; i < fireworkSparksNumber; i++) {
-            if (sumOfProbability < EPS_VALUE) {
-                probabilityOfSelection[i] = GAUSSIAN_COEFFICIENT_BASE / fireworkSparksNumber;
             } else {
-                probabilityOfSelection[i] /= sumOfProbability;
+                temporalPosition[j] = fireworkPosition[j];
             }
-            cumulativeProbability[i] = (i == 0) ? probabilityOfSelection[i] : cumulativeProbability[i - 1] +
-                    probabilityOfSelection[i];
         }
-        //select n-1 locations according to the selection probability
-        double randomPointer;
-        int[] nextLocations = new int[locationsNumber - 1];
-        for (k = 0; k < locationsNumber - 1; k++) {
-            randomPointer = Math.random();
-            for (i = 0; i < fireworkSparksNumber; i++) {
-                if (randomPointer <= cumulativeProbability[i]) {
-                    break;
-                }
-            }
-            nextLocations[k] = i;
-        }
+    }
 
-        //set next generations
+    private void getExplosionAmplitudeForAllFireworks(double minimumValue, double sumMinDiff, double[] explosionAmplitude) {
+        int i;
+        for (i = 0; i < locationsNumber; i++) {
+            explosionAmplitude[i] = (fireworks[i].getValue(benchmarkFunction) - minimumValue + EPS_VALUE) / (sumMinDiff + EPS_VALUE) * maximumAmplitudeNumber;
+        }
+    }
+
+    private void getNumberOfSparksForAllFireworks(double maximumValue, double sumMaxDiff, int[] sparksNumber) {
+        int i;
+        double temporalCoefficient;
+        for (i = 0; i < locationsNumber; i++) {
+            temporalCoefficient = (maximumValue - fireworks[i].getValue(benchmarkFunction) + EPS_VALUE) / (sumMaxDiff + EPS_VALUE);
+            if (temporalCoefficient < lowBound) {
+                temporalCoefficient = lowBound;
+            }
+            if (temporalCoefficient > highBound) {
+                temporalCoefficient = highBound;
+            }
+            sparksNumber[i] = (int) (maximumSparksNumber * temporalCoefficient);
+        }
+    }
+
+    private void selectNLocations() {
+        Spark bestSpark = selectBestLocation();
+        outputBestValue(bestSpark);
+        final int fireworkSparksNumber = calculateNumberOfFireworksAndSparks();
+        numFunctionEvaluations += fireworkSparksNumber;
+        final double[][] fireworkAndSparksPositions = storeFireworksAndSparks(fireworkSparksNumber);
+        final double[] cumulativeProbability = calculateProbabilityForEachLocation(fireworkSparksNumber, fireworkAndSparksPositions);
+        final int[] nextLocations = selectLocationsDueToProbability(fireworkSparksNumber, cumulativeProbability);
+        setNextGenerations(bestSpark, nextLocations);
+    }
+
+    private void setNextGenerations(final Spark bestSpark, final int[] nextLocations) {
+        int i, j, k, index;
+        boolean breakFlag;
         Spark[] nextFireworks = new Spark[locationsNumber];
         nextFireworks[locationsNumber - 1] = bestSpark;
-        boolean breakFlag;
         for (k = 0; k < locationsNumber - 1; k++) {
             index = 0;
             breakFlag = false;
@@ -377,14 +297,133 @@ public class FireworkAlgorithm {
         fireworks = nextFireworks;
     }
 
+    private int[] selectLocationsDueToProbability(final int fireworkSparksNumber, final double[] cumulativeProbability) {
+        int i, k;
+        double randomPointer;
+        int[] nextLocations = new int[locationsNumber - 1];
+        for (k = 0; k < locationsNumber - 1; k++) {
+            randomPointer = Math.random();
+            for (i = 0; i < fireworkSparksNumber; i++) {
+                if (randomPointer <= cumulativeProbability[i]) {
+                    break;
+                }
+            }
+            nextLocations[k] = i;
+        }
+        return nextLocations;
+    }
+
+    private double[] calculateProbabilityForEachLocation(final int fireworkSparksNumber, final double[][] fireworkAndSparksPositions) {
+        int i, j, k;
+        double[] probabilityOfSelection = new double[fireworkSparksNumber];
+        double sumOfProbability = 0, auxDistance;
+        for (i = 0; i < fireworkSparksNumber; i++) {
+            probabilityOfSelection[i] = 0;
+            for (j = 0; j < fireworkSparksNumber; j++) {
+                auxDistance = 0;
+                for (k = 0; k < dimension; k++) {
+                    auxDistance += (fireworkAndSparksPositions[i][k] - fireworkAndSparksPositions[j][k]) *
+                            (fireworkAndSparksPositions[i][k] - fireworkAndSparksPositions[j][k]);
+                }
+                probabilityOfSelection[i] += Math.sqrt(auxDistance);
+            }
+            sumOfProbability += probabilityOfSelection[i];
+        }
+
+        double[] cumulativeProbability = new double[fireworkSparksNumber];
+        for (i = 0; i < fireworkSparksNumber; i++) {
+            if (sumOfProbability < EPS_VALUE) {
+                probabilityOfSelection[i] = GAUSSIAN_COEFFICIENT_BASE / fireworkSparksNumber;
+            } else {
+                probabilityOfSelection[i] /= sumOfProbability;
+            }
+            cumulativeProbability[i] = (i == 0) ? probabilityOfSelection[i] : cumulativeProbability[i - 1] +
+                    probabilityOfSelection[i];
+        }
+        return cumulativeProbability;
+    }
+
+    private double[][] storeFireworksAndSparks(int fireworkSparksNumber) {
+        int i, j, index = 0;
+        double[][] fireworkAndSparksPositions = new double[fireworkSparksNumber][];
+        for (i = 0; i < locationsNumber; i++) {
+            fireworkAndSparksPositions[index] = fireworks[i].getPosition();
+            index++;
+        }
+        for (i = 0; i < locationsNumber; i++) {
+            for (j = 0; j < sparks[i].length; j++) {
+                fireworkAndSparksPositions[index] = sparks[i][j].getPosition();
+                index++;
+            }
+        }
+        for (i = 0; i < gaussianSparksNumber; i++) {
+            fireworkAndSparksPositions[index] = gaussianSparks[i].getPosition();
+            index++;
+        }
+        return fireworkAndSparksPositions;
+    }
+
+    private int calculateNumberOfFireworksAndSparks() {
+        int i, j;
+        int fireworkSparksNumber = locationsNumber + gaussianSparksNumber;
+        for (i = 0; i < locationsNumber; i++) {
+            for (j = 0; j < sparks[i].length; j++) {
+                fireworkSparksNumber++;
+            }
+        }
+        return fireworkSparksNumber;
+    }
+
+    private Spark selectBestLocation() {
+        //select the best location
+        Spark bestSpark = fireworks[0];
+        int i, j;
+        for (i = 1; i < locationsNumber; i++) {
+            if (fireworks[i].getValue(benchmarkFunction) < bestSpark.getValue(benchmarkFunction)) {
+                bestSpark = fireworks[i];
+            }
+        }
+        for (i = 0; i < locationsNumber; i++) {
+            for (j = 0; j < sparks[i].length; j++) {
+                if (sparks[i][j].getValue(benchmarkFunction) < bestSpark.getValue(benchmarkFunction)) {
+                    bestSpark = sparks[i][j];
+                }
+            }
+        }
+        for (i = 0; i < gaussianSparksNumber; i++) {
+            if (gaussianSparks[i].getValue(benchmarkFunction) < bestSpark.getValue(benchmarkFunction)) {
+                bestSpark = gaussianSparks[i];
+            }
+        }
+        optimumValue = bestSpark.getValue(benchmarkFunction);
+        return bestSpark;
+    }
+
     private boolean stopCriteria() {
         //if(numGenerations < 2000) {
-//		if(numFunctionEvaluations < 300000) {
-        if (numFunctionEvaluations < 30) {
-            return false;
+        boolean success;
+        if (numFunctionEvaluations < NUMBER_OF_FUNCTION_EVALUATIONS) { //Readme: This const defines the iterations of the algorithm. 300000 - 400000 are reliable values
+            success = false;
         } else {
             //System.out.println("numGenerations=" + numGenerations + ",numFunctionEvaluations=" + numFunctionEvaluations);
-            return true;
+            success = true;
         }
+        return success;
+    }
+
+    private void outputBestValue(final Spark bestSpark) {
+        PrintStream printStream = null;
+        final boolean append = true;
+        try {
+            printStream = new PrintStream(new FileOutputStream(infoFilePath, append));
+        } catch (FileNotFoundException fnfe) {
+            System.out.println(new Date() + OUTPUT_FILE_NOT_FOUND_IN_PATH + infoFilePath);
+            fnfe.printStackTrace();
+        }
+        printStream.println(BEST_VALUE_FOUND + (1 - optimumValue));
+//        printStream.println(BEST_POSITION_FOUND + bestSpark.getPosition().toString());
+        printStream.println(BEST_POSITION_FOUND + Arrays.toString(bestSpark.getPosition()));
+        printStream.println(SEPARATOR);
+        printStream.close();
     }
 }
