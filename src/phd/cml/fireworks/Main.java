@@ -71,6 +71,15 @@ public class Main {
 
     public static void main(String[] args) {
         //TODO Find a way of reformatting the table
-        new Main().launch(HostSystem.UNIX);
+        long initialTime = System.nanoTime();
+        new Main().launch(HostSystem.WINDOWS);
+        long finalTime = System.nanoTime();
+        System.out.println("Time elapsed for current algorithm: "+ (finalTime-initialTime));
+
+        //TODO We can go this way roughly
+//        long initialTimeImp = System.nanoTime();
+//        new Main().launchImprovedVersion(HostSystem.WINDOWS);
+//        long finalTimeImp = System.nanoTime();
+//        System.out.println("Time elapsed for improved algorithm: "+ (finalTimeImp-initialTimeImp));
     }
 }
