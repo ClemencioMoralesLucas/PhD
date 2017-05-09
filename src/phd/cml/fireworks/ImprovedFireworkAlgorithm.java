@@ -118,6 +118,7 @@ public class ImprovedFireworkAlgorithm {
         gaussianExplode(temporalPosition);
     }
 
+    //todo changing the explosion type may throw different results
     private void gaussianExplode(double[] temporalPosition) {
         int i;
         double[] fireworkPosition;

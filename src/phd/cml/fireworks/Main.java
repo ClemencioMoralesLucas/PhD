@@ -1,7 +1,5 @@
 package phd.cml.fireworks;
 
-import javax.xml.bind.SchemaOutputResolver;
-
 /**
  * Created by Clemencio Morales Lucas.
  */
@@ -44,8 +42,10 @@ public class Main {
     }
 
     private void launchFWAForAllParameters() {
+        BenchmarkFunctions[] benchmarkFunctionsSet = BenchmarkFunctions.values();
         for (int i = 1; i <= BenchmarkFunctionConstants.NUMBER_OF_FUNCTIONS; i++) {
-            System.out.print(FITNESS + i + SEPARATOR);
+            System.out.print(FITNESS +"-"+ benchmarkFunctionsSet[i-1]+"-"+ + i + SEPARATOR);
+            System.out.println();
             maximumBound = new double[availableDimensions[i - 1]];
             minimumBound = new double[availableDimensions[i - 1]];
             for (int j = 0; j < maximumBound.length; j++) {
@@ -108,6 +108,7 @@ public class Main {
     //TODO 3: Ver como meter http://codingjunkie.net/micro-benchmarking-with-caliper/ y si no, BBOB (si no es posible al usar Java, hacerlo a mano)
     public static void main(String[] args) {
 //        for (int i = 0; i < 20; i++) {
+//            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++ "+i+"+++++++++++++++++++++++++++++++++++++++++++++++");
 //            new Main().launch(HostSystem.WINDOWS, false);
 //            new Main().launch(HostSystem.WINDOWS, true);
 //        }
