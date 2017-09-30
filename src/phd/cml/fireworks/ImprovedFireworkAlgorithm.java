@@ -43,6 +43,9 @@ public class ImprovedFireworkAlgorithm {
     private int numFunctionEvaluations;
     BenchmarkFunction benchmarkFunction;
 
+    //TODO Where random is used or random numbers are calculated, use a prepared selection to avoid calculus
+    //TODO REUSE VARIABLES
+    //TODO APPLY GAUSSIAN EXPLODE (CHANGE CODE DOWNTHERE IN THIS FILE)
     public ImprovedFireworkAlgorithm(final int locationsNumber, final int maximumSparksNumber, final double lowBound,
                                      final double highBound, final double maximumAmplitudeNumber, final int gaussianSparksNumber,
                                      final double[] maximumBound, final double[] minimalBound, final String infoFilePath,
@@ -376,6 +379,7 @@ public class ImprovedFireworkAlgorithm {
         return fireworkSparksNumber;
     }
 
+    //TODO REDUCE COMPLEXITY HERE FROM N2 TO N
     private Spark selectBestLocation() {
         //select the best location
         Spark bestSpark = fireworks[0];
