@@ -3,31 +3,11 @@ package phd.cml.fireworks;
 /**
  * Created by Clemencio Morales Lucas.
  */
+
 public class BenchmarkFunction implements BenchmarkFunctionConstants {
 
 	private int index;
 	private double shift;
-
-	public int getIndex() {
-		return this.index;
-	}
-
-	public void setIndex(final int index) {
-		this.index = index;
-	}
-
-	public double getShift() {
-		return this.shift;
-	}
-
-	public void setShift(final double shift) {
-		this.shift = shift;
-	}
-
-	public void setIndexAndShift(final int index, final double shift) {
-		this.setIndex(index);
-		this.setShift(shift);
-	}
 
 	public double getBenchmarkingFunctionValue(double [] inputValues) {
 		double result = 0;
@@ -242,5 +222,22 @@ public class BenchmarkFunction implements BenchmarkFunctionConstants {
 			fit = multiplierFactor * Math.pow(-pivotValue-bound, power);
 		}
 		return fit;
+	}
+
+	public void setIndex(final int index) {
+		this.index = index;
+	}
+
+	public double getShift() {
+		return this.shift;
+	}
+
+	public void setShift(final double shift) {
+		this.shift = shift;
+	}
+
+	public void setIndexAndShift(final int index, final double shift) {
+		this.setIndex(index);
+		this.setShift(shift);
 	}
 }

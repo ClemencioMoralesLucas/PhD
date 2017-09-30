@@ -6,7 +6,8 @@ package phd.cml.fireworks;
 public class Main {
 
     public static final String INFORMATION_FILE_PATH_WINDOWS = "D:\\FA_info.txt";
-    public static final String INFORMATION_FILE_PATH_UNIX = "/home/clemen/FA_info.txt";
+    public static final String INFORMATION_FILE_PATH_UNIX = "FA_info.txt";
+    //public static final String INFORMATION_FILE_PATH_UNIX = "/home/clemen/FA_info.txt"; //for L
     public static final int NUMBER_OF_ITERATIONS = 20;
     public static final int LOCATIONS_NUMBER = 5;
     public static final int NUMBER_OF_SPARKS = 50;
@@ -115,8 +116,9 @@ public class Main {
 //        System.out.println("----------------------------------------------------HARDWARE WARMUP PHASE ENDED---------------------------------------------------------------");
 
         //TODO Find a way of reformatting the table
+        HostSystem hostSystem = HostSystem.UNIX;
         long initialTime = System.nanoTime();
-        new Main().launch(HostSystem.WINDOWS, false);
+        new Main().launch(hostSystem, false);
         long finalTime = System.nanoTime();
         long timeWithoutImprovement = finalTime - initialTime;
         System.out.println(OUTPUT_SEPARATOR);
@@ -125,7 +127,7 @@ public class Main {
 
         //TODO We can go this way roughly
         long initialTimeImp = System.nanoTime();
-        new Main().launch(HostSystem.WINDOWS, true);
+        new Main().launch(hostSystem, true);
         long finalTimeImp = System.nanoTime();
         long timeWithImprovement = finalTimeImp - initialTimeImp;
         System.out.println(OUTPUT_SEPARATOR);
