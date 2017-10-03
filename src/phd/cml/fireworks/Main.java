@@ -108,12 +108,12 @@ public class Main {
     //TODO MARTES 2: Ver resultados
     //TODO 3: Ver como meter http://codingjunkie.net/micro-benchmarking-with-caliper/ y si no, BBOB (si no es posible al usar Java, hacerlo a mano)
     public static void main(String[] args) {
-//        for (int i = 0; i < 20; i++) {
-//            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++ "+i+"+++++++++++++++++++++++++++++++++++++++++++++++");
-//            new Main().launch(HostSystem.WINDOWS, false);
-//            new Main().launch(HostSystem.WINDOWS, true);
-//        }
-//        System.out.println("----------------------------------------------------HARDWARE WARMUP PHASE ENDED---------------------------------------------------------------");
+        for (int i = 0; i < 20; i++) {
+            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++ "+i+"+++++++++++++++++++++++++++++++++++++++++++++++");
+            new Main().launch(HostSystem.WINDOWS, false);
+            new Main().launch(HostSystem.WINDOWS, true);
+        }
+        System.out.println("----------------------------------------------------HARDWARE WARMUP PHASE ENDED---------------------------------------------------------------");
 
         //TODO Find a way of reformatting the table
         HostSystem hostSystem = HostSystem.UNIX;

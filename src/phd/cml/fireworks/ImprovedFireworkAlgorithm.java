@@ -76,26 +76,25 @@ public class ImprovedFireworkAlgorithm {
         fireworks = new Spark[locationsNumber];
         double[] randomPosition = new double[dimension];
 
-        for (int i = 0; i < locationsNumber; i++) {
-            fireworks[i] = new Spark();
-            for (int j = 0; j < dimension; j++) {
-                randomPosition[j] = maximumBound[j] - Math.random() * (maximumBound[j] - minimalBound[j]) * QUARTER;
+        for (int i = 0; i < this.locationsNumber; i++) {
+            this.fireworks[i] = new Spark();
+            for (int j = 0; j < this.dimension; j++) {
+                randomPosition[j] = this.maximumBound[j] - Math.random() * (this.maximumBound[j] - this.minimalBound[j]) * QUARTER;
             }
-            fireworks[i].setPosition(randomPosition);
+            this.fireworks[i].setPosition(randomPosition);
         }
     }
 
     private void setOffNFireworks() {
-        //get max(worst) and min(best) value
+        int i;
         double maximumValue = fireworks[0].getValue(benchmarkFunction);
         double minimumValue = fireworks[0].getValue(benchmarkFunction);
-        int i;
-        for (i = 1; i < locationsNumber; i++) {
-            if (fireworks[i].getValue(benchmarkFunction) > maximumValue) {
-                maximumValue = fireworks[i].getValue(benchmarkFunction);
+        for (i = 1; i < this.locationsNumber; i++) {
+            if (this.fireworks[i].getValue(this.benchmarkFunction) > maximumValue) {
+                maximumValue = this.fireworks[i].getValue(this.benchmarkFunction);
             }
-            if (fireworks[i].getValue(benchmarkFunction) < minimumValue) {
-                minimumValue = fireworks[i].getValue(benchmarkFunction);
+            if (this.fireworks[i].getValue(this.benchmarkFunction) < minimumValue) {
+                minimumValue = this.fireworks[i].getValue(this.benchmarkFunction);
             }
         }
         double sumMaxDiff = 0.0;
@@ -104,66 +103,69 @@ public class ImprovedFireworkAlgorithm {
             sumMaxDiff += maximumValue - fireworks[i].getValue(benchmarkFunction);
             sumMinDiff += fireworks[i].getValue(benchmarkFunction) - minimumValue;
         }
+        explodeFireworks(maximumValue, minimumValue, sumMaxDiff, sumMinDiff);
+    }
 
-        int[] sparksNumber = new int[locationsNumber];
+    private void explodeFireworks(final double maximumValue, final double minimumValue, final double sumMaxDiff, final double sumMinDiff) {
+        final int[] sparksNumber = new int[locationsNumber];
         getNumberOfSparksForAllFireworks(maximumValue, sumMaxDiff, sparksNumber);
 
-        double explosionAmplitude[] = new double[locationsNumber];
+        final double explosionAmplitude[] = new double[locationsNumber];
         getExplosionAmplitudeForAllFireworks(minimumValue, sumMinDiff, explosionAmplitude);
 
-        sparks = new Spark[locationsNumber][];
-        double[] temporalPosition = generateSparksForAllFireworks(sparksNumber, explosionAmplitude);
+        this.sparks = new Spark[locationsNumber][];
+        final double[] temporalPosition = generateSparksForAllFireworks(sparksNumber, explosionAmplitude);
 
-        gaussianSparks = new Spark[gaussianSparksNumber];
+        this.gaussianSparks = new Spark[gaussianSparksNumber];
         gaussianExplode(temporalPosition);
     }
 
-    //todo changing the explosion type may throw different results
+    //todo changing the explosion type may yield different results
     private void gaussianExplode(double[] temporalPosition) {
-        int i;
+        int i, j, k;
         double[] fireworkPosition;
-        int k, j;
         Random rand;
         for (k = 0; k < gaussianSparksNumber; k++) {
             gaussianSparks[k] = new Spark();
-            //randomly select a firework
             rand = new Random();
             i = Math.abs(rand.nextInt()) % locationsNumber;
             fireworkPosition = fireworks[i].getPosition();
-            //select z directions
-            boolean[] randFlag = new boolean[dimension];
+            final boolean[] randFlag = new boolean[dimension];
             Arrays.fill(randFlag, false);
-
-//            int numExplosionDirections = (int) (dimension * Math.random());
-            int numExplosionDirections = new Random().nextInt(dimension);
-            int randomCount = 0;
-            int temporaryRandom;
-            while (randomCount < numExplosionDirections) {
-                temporaryRandom = Math.abs(rand.nextInt()) % dimension;
-                if (!randFlag[temporaryRandom]) {
-                    randFlag[temporaryRandom] = true;
-                    randomCount++;
-                }
-            }
-
-            //Gaussian Explosion (different explode)
-            double gaussianCoefficient = GAUSSIAN_COEFFICIENT_BASE + rand.nextGaussian();
-            for (j = 0; j < dimension; j++) {
-                if (randFlag[j]) {
-                    temporalPosition[j] = fireworkPosition[j] * gaussianCoefficient;
-                    if (temporalPosition[j] < minimalBound[j] || temporalPosition[j] > maximumBound[j]) {
-                        double abspos = Math.abs(temporalPosition[j]);
-                        while (abspos >= 0) {
-                            abspos -= (maximumBound[j] - minimalBound[j]);
-                        }
-                        abspos += (maximumBound[j] - minimalBound[j]);
-                        temporalPosition[j] = minimalBound[j] + abspos;
-                    }
-                } else {
-                    temporalPosition[j] = fireworkPosition[j];
-                }
-            }
+            calculateTemporaryFlaggedRandoms(rand, randFlag);
+            performGaussianExplosion(temporalPosition, fireworkPosition, rand, randFlag);
             gaussianSparks[k].setPosition(temporalPosition);
+        }
+    }
+
+    private void performGaussianExplosion(final double[] temporalPosition, final double[] fireworkPosition,
+                                          final Random rand, boolean[] randFlag) {
+        double gaussianCoefficient = GAUSSIAN_COEFFICIENT_BASE + rand.nextGaussian();
+        for (int j = 0; j < this.dimension; j++) {
+            if (randFlag[j]) {
+                temporalPosition[j] = fireworkPosition[j] * gaussianCoefficient;
+                if (temporalPosition[j] < this.minimalBound[j] || temporalPosition[j] > this.maximumBound[j]) {
+                    double absolutePosition = Math.abs(temporalPosition[j]);
+                    while (absolutePosition >= 0) {
+                        absolutePosition -= (this.maximumBound[j] - this.minimalBound[j]);
+                    }
+                    absolutePosition += (this.maximumBound[j] - this.minimalBound[j]);
+                    temporalPosition[j] = this.minimalBound[j] + absolutePosition;
+                }
+            } else {
+                temporalPosition[j] = fireworkPosition[j];
+            }
+        }
+    }
+
+    private void calculateTemporaryFlaggedRandoms(final Random rand, final boolean[] randFlag) {
+        int numExplosionDirections = new Random().nextInt(this.dimension), randomCount = 0, temporaryRandom;
+        while (randomCount < numExplosionDirections) {
+            temporaryRandom = Math.abs(rand.nextInt()) % this.dimension;
+            if (!randFlag[temporaryRandom]) {
+                randFlag[temporaryRandom] = true;
+                randomCount++;
+            }
         }
     }
 
@@ -377,44 +379,50 @@ public class ImprovedFireworkAlgorithm {
         return fireworkSparksNumber;
     }
 
-    //TODO REDUCE COMPLEXITY HERE FROM N2 TO N
     private Spark selectBestLocation() {
-        //select the best location
         Spark bestSpark = fireworks[0];
-        int i, j;
-        for (i = 1; i < locationsNumber; i++) {
-            if (fireworks[i].getValue(benchmarkFunction) < bestSpark.getValue(benchmarkFunction)) {
-                bestSpark = fireworks[i];
+        bestSpark = updateBestSparkIndex(bestSpark);
+        bestSpark = calculateSparkFitnessByBenchmark(bestSpark);
+        bestSpark = applyGaussianUpdate(bestSpark);
+        optimumValue = bestSpark.getValue(benchmarkFunction);
+        return bestSpark;
+    }
+
+    private Spark applyGaussianUpdate(Spark bestSpark) {
+        for (int i = 0; i < gaussianSparksNumber; i++) {
+            if (gaussianSparks[i].getValue(benchmarkFunction) < bestSpark.getValue(benchmarkFunction)) {
+                bestSpark = gaussianSparks[i];
             }
         }
-        for (i = 0; i < locationsNumber; i++) {
-            for (j = 0; j < sparks[i].length; j++) {
+        return bestSpark;
+    }
+
+    private Spark calculateSparkFitnessByBenchmark(Spark bestSpark) {
+        for (int i = 0; i < locationsNumber; i++) {
+            for (int j = 0; j < sparks[i].length; j++) {
                 if (sparks[i][j].getValue(benchmarkFunction) < bestSpark.getValue(benchmarkFunction)) {
                     bestSpark = sparks[i][j];
                 }
             }
         }
-        for (i = 0; i < gaussianSparksNumber; i++) {
-            if (gaussianSparks[i].getValue(benchmarkFunction) < bestSpark.getValue(benchmarkFunction)) {
-                bestSpark = gaussianSparks[i];
+        return bestSpark;
+    }
+
+    private Spark updateBestSparkIndex(Spark bestSpark) {
+        for (int i = 1; i < locationsNumber; i++) {
+            if (fireworks[i].getValue(benchmarkFunction) < bestSpark.getValue(benchmarkFunction)) {
+                bestSpark = fireworks[i];
             }
         }
-        optimumValue = bestSpark.getValue(benchmarkFunction);
         return bestSpark;
     }
 
     private boolean stopCriteria() {
         //if(numGenerations < 2000) {
-        boolean success;
-        if (numFunctionEvaluations < NUMBER_OF_FUNCTION_EVALUATIONS) { //Readme: This const defines the iterations of the algorithm. 300000 - 400000 are reliable values
-            success = false;
-        } else {
-            //System.out.println("numGenerations=" + numGenerations + ",numFunctionEvaluations=" + numFunctionEvaluations);
-            success = true;
-        }
-        return success;
+        return numFunctionEvaluations >= NUMBER_OF_FUNCTION_EVALUATIONS;
     }
 
+    //TODO THIS METHOD IS THE KEY FOR OPTIMIZATION!
     private void outputBestValue(final Spark bestSpark) {
         PrintStream printStream = null;
         final boolean append = true;
