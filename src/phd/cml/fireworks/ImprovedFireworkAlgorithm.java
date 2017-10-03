@@ -38,10 +38,9 @@ public class ImprovedFireworkAlgorithm {
     private double[] minimalBound;
     private int dimension;
     private String infoFilePath;
-    private int numGenerations;
     private double optimumValue;
     private int numFunctionEvaluations;
-    BenchmarkFunction benchmarkFunction;
+    private BenchmarkFunction benchmarkFunction;
 
     //TODO Where random is used or random numbers are calculated, use a prepared selection to avoid calculus
     //TODO REUSE VARIABLES
@@ -73,7 +72,6 @@ public class ImprovedFireworkAlgorithm {
     }
 
     private void selectNInitialLocations() {
-        numGenerations = 0;
         numFunctionEvaluations = 0;
         fireworks = new Spark[locationsNumber];
         double[] randomPosition = new double[dimension];
@@ -88,7 +86,6 @@ public class ImprovedFireworkAlgorithm {
     }
 
     private void setOffNFireworks() {
-        numGenerations++;
         //get max(worst) and min(best) value
         double maximumValue = fireworks[0].getValue(benchmarkFunction);
         double minimumValue = fireworks[0].getValue(benchmarkFunction);
@@ -137,7 +134,8 @@ public class ImprovedFireworkAlgorithm {
             boolean[] randFlag = new boolean[dimension];
             Arrays.fill(randFlag, false);
 
-            int numExplosionDirections = (int) (dimension * Math.random());
+//            int numExplosionDirections = (int) (dimension * Math.random());
+            int numExplosionDirections = new Random().nextInt(dimension);
             int randomCount = 0;
             int temporaryRandom;
             while (randomCount < numExplosionDirections) {
@@ -184,7 +182,7 @@ public class ImprovedFireworkAlgorithm {
                 random = new Random();
                 randomFlag = new boolean[dimension];
                 Arrays.fill(randomFlag, false);
-                explosionDirectionsNumber = (int) (dimension * Math.random());
+                explosionDirectionsNumber = new Random().nextInt(dimension);
                 randomCount = 0;
                 while (randomCount < explosionDirectionsNumber) {
                     temporaryRandom = random.nextInt(dimension);
@@ -424,7 +422,7 @@ public class ImprovedFireworkAlgorithm {
             printStream = new PrintStream(new FileOutputStream(infoFilePath, append));
         } catch (FileNotFoundException fnfe) {
             System.out.println(new Date() + OUTPUT_FILE_NOT_FOUND_IN_PATH + infoFilePath);
-            fnfe.printStackTrace();
+            System.out.println(fnfe.getMessage());
         }
         printStream.println(BEST_VALUE_FOUND + (1 - optimumValue));
 //        printStream.println(BEST_POSITION_FOUND + bestSpark.getPosition().toString());
