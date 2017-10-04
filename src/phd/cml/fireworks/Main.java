@@ -1,5 +1,7 @@
 package phd.cml.fireworks;
 
+import java.io.FileNotFoundException;
+
 /**
  * Created by Clemencio Morales Lucas.
  */
@@ -32,7 +34,7 @@ public class Main {
 
     public Main() {}
 
-    public void launch(final HostSystem hostSystem, final boolean improvedVersion) {
+    public void launch(final HostSystem hostSystem, final boolean improvedVersion) throws FileNotFoundException {
         filePath = hostSystem.equals(HostSystem.UNIX) ? INFORMATION_FILE_PATH_UNIX : INFORMATION_FILE_PATH_WINDOWS;
         printHeader();
         if (improvedVersion) {
@@ -70,7 +72,7 @@ public class Main {
         }
     }
 
-    private void launchImprovedFWAForAllParameters() {
+    private void launchImprovedFWAForAllParameters() throws FileNotFoundException {
         for (int i = 1; i <= BenchmarkFunctionConstants.NUMBER_OF_FUNCTIONS; i++) {
             System.out.print(FITNESS + i + SEPARATOR);
             maximumBound = new double[availableDimensions[i - 1]];
@@ -107,7 +109,7 @@ public class Main {
     //TODO MARTES 1: seguir esquema roughly de abajo y meter optimización con inicialización previa aleatoria
     //TODO MARTES 2: Ver resultados
     //TODO 3: Ver como meter http://codingjunkie.net/micro-benchmarking-with-caliper/ y si no, BBOB (si no es posible al usar Java, hacerlo a mano)
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         for (int i = 0; i < 20; i++) {
             System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++ "+i+"+++++++++++++++++++++++++++++++++++++++++++++++");
             new Main().launch(HostSystem.WINDOWS, false);

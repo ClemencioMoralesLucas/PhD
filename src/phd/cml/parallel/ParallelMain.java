@@ -4,6 +4,8 @@ import phd.cml.fireworks.Main;
 import phd.cml.parallel.ClassicFWA;
 import phd.cml.parallel.ImprovedFWA;
 
+import java.io.FileNotFoundException;
+
 /**
  * Created by Clemencio Morales Lucas.
  */
@@ -39,7 +41,7 @@ public class ParallelMain {
         printResultsDependingOnAhmdalsAcceleration(ahmdalAcceleration);
     }
 
-    private static void executeHardwareWarmup() {
+    private static void executeHardwareWarmup() throws FileNotFoundException {
         for (int i = 0; i < 20; i++) {
             new Main().launch(Main.HostSystem.WINDOWS, false);
             new Main().launch(Main.HostSystem.WINDOWS, true);

@@ -42,13 +42,15 @@ public class ImprovedFireworkAlgorithm {
     private int numFunctionEvaluations;
     private BenchmarkFunction benchmarkFunction;
 
+   // private PrintStream printStream;
+
     //TODO Where random is used or random numbers are calculated, use a prepared selection to avoid calculus
     //TODO REUSE VARIABLES
     //TODO APPLY GAUSSIAN EXPLODE (CHANGE CODE DOWNTHERE IN THIS FILE)
     public ImprovedFireworkAlgorithm(final int locationsNumber, final int maximumSparksNumber, final double lowBound,
                                      final double highBound, final double maximumAmplitudeNumber, final int gaussianSparksNumber,
                                      final double[] maximumBound, final double[] minimalBound, final String infoFilePath,
-                                     final BenchmarkFunction benchmarkFunction) {
+                                     final BenchmarkFunction benchmarkFunction) throws FileNotFoundException {
         this.locationsNumber = locationsNumber;
         this.maximumSparksNumber = maximumSparksNumber;
         this.lowBound = lowBound;
@@ -60,9 +62,10 @@ public class ImprovedFireworkAlgorithm {
         this.dimension = this.maximumBound.length;
         this.infoFilePath = infoFilePath;
         this.benchmarkFunction = benchmarkFunction;
+       // this.printStream = new PrintStream(new FileOutputStream(infoFilePath, true));
     }
 
-    public double launch() {
+    public double launch() throws FileNotFoundException {
         selectNInitialLocations();
         while (!stopCriteria()) {
             setOffNFireworks();
@@ -122,7 +125,7 @@ public class ImprovedFireworkAlgorithm {
 
     //todo changing the explosion type may yield different results
     private void gaussianExplode(double[] temporalPosition) {
-        int i, j, k;
+        int i, k;
         double[] fireworkPosition;
         Random rand;
         for (k = 0; k < gaussianSparksNumber; k++) {
@@ -244,7 +247,7 @@ public class ImprovedFireworkAlgorithm {
         }
     }
 
-    private void selectNLocations() {
+    private void selectNLocations() throws FileNotFoundException {
         Spark bestSpark = selectBestLocation();
         outputBestValue(bestSpark);
         final int fireworkSparksNumber = calculateNumberOfFireworksAndSparks();
@@ -423,19 +426,19 @@ public class ImprovedFireworkAlgorithm {
     }
 
     //TODO THIS METHOD IS THE KEY FOR OPTIMIZATION!
-    private void outputBestValue(final Spark bestSpark) {
-        PrintStream printStream = null;
-        final boolean append = true;
-        try {
-            printStream = new PrintStream(new FileOutputStream(infoFilePath, append));
-        } catch (FileNotFoundException fnfe) {
-            System.out.println(new Date() + OUTPUT_FILE_NOT_FOUND_IN_PATH + infoFilePath);
-            System.out.println(fnfe.getMessage());
-        }
+    private void outputBestValue(final Spark bestSpark) throws FileNotFoundException {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(BEST_VALUE_FOUND + (1 - optimumValue));
+        stringBuilder.append(BEST_POSITION_FOUND + Arrays.toString(bestSpark.getPosition()));
+        stringBuilder.append(SEPARATOR);
+        System.out.println(stringBuilder.toString());
+
+/*      SLOW WAY
         printStream.println(BEST_VALUE_FOUND + (1 - optimumValue));
-//        printStream.println(BEST_POSITION_FOUND + bestSpark.getPosition().toString());
+        printStream.println(BEST_POSITION_FOUND + bestSpark.getPosition().toString());
         printStream.println(BEST_POSITION_FOUND + Arrays.toString(bestSpark.getPosition()));
         printStream.println(SEPARATOR);
         printStream.close();
+*/
     }
 }

@@ -2,6 +2,8 @@ package phd.cml.parallel;
 //TODO DELETE
 import phd.cml.fireworks.Main;
 
+import java.io.FileNotFoundException;
+
 import static phd.cml.fireworks.Main.INFORMATION_FILE_PATH_UNIX;
 import static phd.cml.fireworks.Main.INFORMATION_FILE_PATH_WINDOWS;
 
@@ -25,7 +27,11 @@ public class ClassicFWA implements Runnable {
         long initialTime = System.nanoTime();
 
         //TODO Traer aquí la lógica EN VEZ DE ESTA LINEA
-        new Main().launch(Main.HostSystem.UNIX, false);
+        try {
+            new Main().launch(Main.HostSystem.UNIX, false);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
 //for (int i = 0; i < 10; i++) {
 //    System.out.println("A");

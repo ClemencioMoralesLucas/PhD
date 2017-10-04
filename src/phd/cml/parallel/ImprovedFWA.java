@@ -2,6 +2,8 @@ package phd.cml.parallel;
 //TODO DELETE
 import phd.cml.fireworks.Main;
 
+import java.io.FileNotFoundException;
+
 /**
  * Created by Clemencio Morales Lucas.
  */
@@ -22,7 +24,11 @@ public class ImprovedFWA implements Runnable {
 
 
         //TODO Traer aquí la lógica EN VEZ DE ESTA LINEA
-                new Main().launch(Main.HostSystem.UNIX, true);
+        try {
+            new Main().launch(Main.HostSystem.UNIX, true);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
 //        for (int i = 0; i < 10; i++) {
 //            System.out.println("B-Improved");
