@@ -145,9 +145,9 @@ public class Main {
     private static void printResultsDependingOnAhmdalsAcceleration(double ahmdalAcceleration) {
         ahmdalAcceleration -= 100;
         if(ahmdalAcceleration >= 1){
-            System.out.println("The improved algorithm is a "+ahmdalAcceleration+ "% faster");
+            System.out.println("The improved algorithm is a {"+ahmdalAcceleration+ "}% faster");
         } else if (ahmdalAcceleration < 1) {
-            System.out.println("No improvement. The new algorithm is "+Math.abs(ahmdalAcceleration)+"% slower");
+            System.out.println("No improvement. The new algorithm is a {"+Math.abs(ahmdalAcceleration)+"}% slower");
         }
     }
 }
