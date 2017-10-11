@@ -40,7 +40,7 @@ public class MainFireworksTest {
 
     private void assertThatImprovedPertentageIsBiggerThanThreshold(final double improvedFireworksAlgorithmResult) {
         if (improvedFireworksAlgorithmResult < ACCEPTANCE_THRESHOLD_PERCENTAGE) {
-            fail("Improved Fireworks Algorithm is performing worse than Classic Fireworks Algorithm");
+            fail("Improved Fireworks Algorithm is performing "+ (ACCEPTANCE_THRESHOLD_PERCENTAGE - improvedFireworksAlgorithmResult) +"% worse than Classic Fireworks Algorithm");
         }
     }
 
