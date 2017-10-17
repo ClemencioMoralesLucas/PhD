@@ -4,6 +4,12 @@ package phd.cml.fireworks;
  * Created by Clemencio Morales Lucas.
  */
 
+//TODO LIST
+/**
+ * TODO 1 Refactor the whole code (code and tests)
+ * TODO 2 Comment with just the name in all files
+ *
+ */
 public class BenchmarkFunction implements BenchmarkFunctionConstants {
 
 	private int index;

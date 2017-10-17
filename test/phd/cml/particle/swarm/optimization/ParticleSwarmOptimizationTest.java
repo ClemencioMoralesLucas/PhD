@@ -17,6 +17,7 @@ public class ParticleSwarmOptimizationTest {
     private static final String SOLUTION_FOUND_MESSAGE = "Solution found at Iteration #";
     private static final String BEST_X_COORDINATE_MESSAGE = "====> Best X:";
     private static final String BEST_Y_COORDINATE_MESSAGE = "====> Best Y:";
+    private static final double[] MINIMUM_POSITION_TEST_ARRAY = {5, 1, 3, 5, 9, 7, 8};
 
     private ParticleSwarmOptimization particleSwarmOptimization;
     private final ByteArrayOutputStream outputStreamContent = new ByteArrayOutputStream();
@@ -39,20 +40,17 @@ public class ParticleSwarmOptimizationTest {
     }
 
     @Test
-    public void testInitializeSwarm() throws Exception {
-        //TODO SEGUIR
-    }
-
-    @Test
-    public void testUpdateFitnessList() throws Exception {
-        //TODO SEGUIR
-
+    public void testInitializeSwarmAndUpdateFitnessList() throws Exception {
+        try {
+            this.particleSwarmOptimization.initializeSwarm();
+            this.particleSwarmOptimization.updateFitnessList();
+        } catch (final Exception e) {
+            fail();
+        }
     }
 
     @Test
     public void testGetMinimumPosition() throws Exception {
-        //TODO SEGUIR
-
+        assertEquals(ParticleSwarmOptimization.getMinimumPosition(MINIMUM_POSITION_TEST_ARRAY), 1);
     }
-
 }
