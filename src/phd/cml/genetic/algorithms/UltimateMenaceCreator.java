@@ -7,19 +7,7 @@ import java.util.Random;
  * Created by Clemencio Morales Lucas.
  */
 
-public class UltimateMenaceCreator {
-
-    public static final int BIT_ONE = 1;
-    public static final int BIT_ZERO = 0;
-
-    public static final int GENOTYPE_LENGTH = 10;
-    public static final int CHROMOSOME_LENGTH = 7;
-
-    public static final int NUMBER_OF_ITERATIONS = 100;
-
-    public enum Species {
-        BUTTERFLY, PREDATOR, ALIEN, CAT, TERMINATOR, KOALA, HAKE
-    }
+public class UltimateMenaceCreator implements UltimateMenaceCreatorConstants {
 
     private int genotypeLength;
     private int chromosomeLength;
@@ -31,7 +19,7 @@ public class UltimateMenaceCreator {
         this.setGenotypeLength(genotypeLength);
         this.setChromosomeLength(chromosomeLength);
         this.setNumberOfIterations(numberOfIterations);
-        this.initialize();
+        this.initializeChromosomicPopulation();
     }
 
     public int getGenotypeLength() {
@@ -74,11 +62,8 @@ public class UltimateMenaceCreator {
         this.chromosome = chromosome;
     }
 
-    private void initialize(){
-        //AG Population
+    private void initializeChromosomicPopulation(){
         this.setChromosome(new boolean[this.getGenotypeLength()][this.getChromosomeLength()]);
-
-        //Random Genotipe Initialization
         for (int i = 0; i < this.getGenotypeLength(); i++) {
             for (int j = 0; j < this.getChromosomeLength(); j++) {
                 chromosome[i][j] = getRandomBoolean();
@@ -87,62 +72,66 @@ public class UltimateMenaceCreator {
     }
 
     public void evolve(final boolean verboseMode){
-        best = 0; //Index of the best element among the population
+        best = 0;
         for (int g = 0; g < this.getNumberOfIterations(); g++) {
             if(verboseMode){
-                System.out.println("Generation #" + g);
+                System.out.println(GENERATION_NUMBER_MESSAGE + g);
             }
+            updateCurrentBestGenotipe();
+            applyGeneticOperators();
 
-            //Genotipe Evaluation
-            for (int i = 1; i < this.getGenotypeLength(); i++) {
-                if (fitnessFunction(chromosome[best]) < fitnessFunction(chromosome[i])) {
-                    best = i;
-                }
-            }
-
-            //Genetic operators application
-            for (int i = 0; i < this.getGenotypeLength(); i++) {
-                //Crossover that avoids self-reproduction
-                if (i != best) {
-                    for (int j = 0; j < this.getChromosomeLength(); j++){
-                        if (getRandomBoolean()) {
-                            chromosome[i][j] = chromosome[best][j];
-                        } else {
-                            chromosome[i][j] = chromosome[i][j];
-                        }
-
-                        //Mutation (lower probability)
-                        if (new Random().nextInt(100) % 100 < 4) {
-                            chromosome[i][j] = getRandomBoolean();
-                        }
-                    }
-                }
-            }
             if(verboseMode){
                 printCurrentPhenotype(chromosome[best]);
             }
         }
     }
 
+    private void applyGeneticOperators() {
+        for (int i = 0; i < this.getGenotypeLength(); i++) {
+            if (i != best) {  //Crossover that avoids self-reproduction
+                for (int j = 0; j < this.getChromosomeLength(); j++){
+                    if (getRandomBoolean()) {
+                        chromosome[i][j] = chromosome[best][j];
+                    } else {
+                        chromosome[i][j] = chromosome[i][j];
+                    }
+                    performLowProbabilityMutation(i, j);
+                }
+            }
+        }
+    }
+
+    private void performLowProbabilityMutation(final int x, final int y) {
+        if (new Random().nextInt(PERCENTAGE_LIMIT) % PERCENTAGE_LIMIT < MUTATION_PROBABILITY) {
+            chromosome[x][y] = getRandomBoolean();
+        }
+    }
+
+    private void updateCurrentBestGenotipe() {
+        for (int i = 1; i < this.getGenotypeLength(); i++) {
+            if (fitnessFunction(chromosome[best]) < fitnessFunction(chromosome[i])) {
+                best = i;
+            }
+        }
+    }
+
     public void printPhenotype(){
         System.out.println();
-        System.out.println("************** PHENOTYPE FOUND **************");
-        System.out.println("Best fitness: " + fitnessFunction(chromosome[best]));
+        System.out.println(PHENOTYPE_FOUND_MESSAGE);
+        System.out.println(BEST_FITNESS_MESSAGE + fitnessFunction(chromosome[best]));
         printBestPhenotype(chromosome[best]);
         System.out.println();
     }
 
     private static boolean getRandomBoolean() {
-        return Math.random() < 0.5;
+        return Math.random() < HALF_DOUBLE;
     }
 
     private static int fitnessFunction(final boolean[] chromosome) {
         final int[] intChromosome = parseToIntArray(chromosome);
-
-        //Species available (We�d like to mix 1, 2 and 4 mainly):
+        //Species available (We'd like to mix 1, 2 and 4 mainly):
         // 0            1        2     3        4        5     6
         //BUTTERFLY, PREDATOR, ALIEN, CAT, TERMINATOR, KOALA, HAKE
-
         return (-intChromosome [0] + intChromosome [1] + intChromosome [2]
                 -intChromosome [3] + intChromosome [4] - intChromosome [5]
                 -intChromosome [6] );
@@ -157,23 +146,23 @@ public class UltimateMenaceCreator {
     }
 
     private static void printCurrentPhenotype(boolean[] chromosome) {
-        System.out.println("Fitness: " + fitnessFunction(chromosome));
+        System.out.println(FITNESS_MESSAGE + fitnessFunction(chromosome));
         System.out.println(Arrays.toString(chromosome));
         System.out.println("----------------------------------------------");
     }
 
     private static void printBestPhenotype(final boolean[] chromosome){
-        String result = "Ultimate menace formed by the mixture of:\n[";
-        String discarded = "Discarded specimens:\n[";
+        String result = ULTIMATE_MENACE_FORMED_BY_THE_MIXTURE_OF_MESSAGE;
+        String discarded = DISCARDED_SPECIMENS_MESSAGE;
         for(int i = 0; i < chromosome.length; i++) {
             if(chromosome[i]){
-                result += Species.values()[i] + ",";
+                result += Species.values()[i] + COMMA_CHARACTER;
             } else {
-                discarded += Species.values()[i] + ",";
+                discarded += Species.values()[i] + COMMA_CHARACTER;
             }
         }
-        result = result.replaceAll(",$", "") + "]";
-        discarded = discarded.replaceAll(",$", "") + "]";
+        result = result.replaceAll(SPECIAL_REGEX, EMPTY_STRING) + CLOSING_BRACKET;
+        discarded = discarded.replaceAll(SPECIAL_REGEX, EMPTY_STRING) + CLOSING_BRACKET;
 
         System.out.println(result);
         System.out.println();
@@ -183,10 +172,8 @@ public class UltimateMenaceCreator {
     public static void main(String [] args) {
         UltimateMenaceCreator ultimateMenaceCreator =
                 new UltimateMenaceCreator(GENOTYPE_LENGTH, CHROMOSOME_LENGTH, NUMBER_OF_ITERATIONS);
-
         final boolean verboseMode = true;
         ultimateMenaceCreator.evolve(verboseMode);
-
         ultimateMenaceCreator.printPhenotype();
     }
 }
