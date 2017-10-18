@@ -5,6 +5,7 @@ import java.util.Arrays;
 /**
  * Created by Clemencio Morales Lucas.
  */
+
 public class Spark {
 
 	private double [] position;

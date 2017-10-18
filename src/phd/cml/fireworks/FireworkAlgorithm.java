@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
+
 /**
  * Created by Clemencio Morales Lucas.
  */

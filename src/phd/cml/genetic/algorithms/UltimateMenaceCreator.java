@@ -4,8 +4,9 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * Created by Clemencio Morales Lucas on 24/11/2015.
+ * Created by Clemencio Morales Lucas.
  */
+
 public class UltimateMenaceCreator {
 
     public static final int BIT_ONE = 1;
@@ -138,7 +139,7 @@ public class UltimateMenaceCreator {
     private static int fitnessFunction(final boolean[] chromosome) {
         final int[] intChromosome = parseToIntArray(chromosome);
 
-        //Species available (We´d like to mix 1, 2 and 4 mainly):
+        //Species available (Weï¿½d like to mix 1, 2 and 4 mainly):
         // 0            1        2     3        4        5     6
         //BUTTERFLY, PREDATOR, ALIEN, CAT, TERMINATOR, KOALA, HAKE
 

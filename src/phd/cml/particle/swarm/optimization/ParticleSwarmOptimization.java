@@ -1,7 +1,7 @@
 package phd.cml.particle.swarm.optimization;
 
 /**
- * Created by Clemencio Morales Lucas on 14/12/2015.
+ * Created by Clemencio Morales Lucas.
  */
 
 import java.util.Vector;
@@ -94,7 +94,7 @@ public class ParticleSwarmOptimization {
                 p.setLocation(loc);
             }
 
-            //Observation: The function ought to be minimized, thus it means it´s getting closer to 0
+            //Observation: The function ought to be minimized, thus it means itï¿½s getting closer to 0
             error = Particle.evaluate(gBestLocation) - 0;
 
             if(verboseMode){

@@ -11,6 +11,10 @@ import java.io.PrintStream;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+/**
+ * Created by Clemencio Morales Lucas.
+ */
+
 public class MainFireworksTest {
 
     private static final double ACCEPTANCE_THRESHOLD_PERCENTAGE = 35.0;

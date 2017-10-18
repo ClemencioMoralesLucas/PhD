@@ -3,6 +3,7 @@ package phd.cml.fireworks;
 /**
  * Created by Clemencio Morales Lucas.
  */
+
 public enum BenchmarkFunctions {
 
     SPHERE, SCHWEFEL, ROSENBROCK, ACKLEY, GRIEWANKS, RASTRIGIN, PENALIZED,

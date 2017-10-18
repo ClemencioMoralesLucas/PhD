@@ -1,8 +1,9 @@
 package phd.cml.particle.swarm.optimization;
 
 /**
- * Created by Clemencio Morales Lucas on 14/12/2015.
+ * Created by Clemencio Morales Lucas.
  */
+
 public class Particle {
 
     public static final double LOCATION_X_LOW = 1;
@@ -49,7 +50,7 @@ public class Particle {
 
     /*
     This evaluation function solves the following problem:
-    Find an ´x´ and ´y´ value that minimize the function below:
+    Find an ï¿½xï¿½ and ï¿½yï¿½ value that minimize the function below:
     f(x, y) = (2.8125 - x + x * y^4)^2 + (2.25 - x + x * y^2)^2 + (1.5 - x + x*y)^2
     Where 1 <= x <= 4, and -1 <= y <= 1
      */

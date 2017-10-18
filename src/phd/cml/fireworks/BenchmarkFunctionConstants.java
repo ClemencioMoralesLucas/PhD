@@ -3,6 +3,7 @@ package phd.cml.fireworks;
 /**
  * Created by Clemencio Morales Lucas.
  */
+
 public interface BenchmarkFunctionConstants {
 
     int NUMBER_OF_FUNCTIONS = 12;

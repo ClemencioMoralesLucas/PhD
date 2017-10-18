@@ -6,9 +6,7 @@ package phd.cml.fireworks;
 
 //TODO LIST
 /**
- * TODO 1 Refactor the whole code (code and tests)
- * TODO 2 Comment with just the name in all files
- *
+ * TODO 1 Refactor the whole code (code and tests)*
  */
 public class BenchmarkFunction implements BenchmarkFunctionConstants {
 
@@ -52,7 +50,7 @@ public class BenchmarkFunction implements BenchmarkFunctionConstants {
 			case 11:
 				result = axisParallelFunction(inputValues);
 				break;
-			case NUMBER_OF_FUNCTIONS: //Defines the number of benchmark functions.
+			case NUMBER_OF_FUNCTIONS:
 				result = rotatedHyperEllipsoidFunction(inputValues);
 				break;
 			default:
@@ -62,8 +60,12 @@ public class BenchmarkFunction implements BenchmarkFunctionConstants {
 		return result;
 	}
 
+	/**
+	 * Rotated hyper ellipsoid Function Bounds[-65.536,65.536] dim 30 optimum 0.0D ini [32.768,65.536]
+	 * @param inputValues
+	 * @return result of the computation
+	 */
 	private double rotatedHyperEllipsoidFunction(final double[] inputValues) {
-		//Rotated hyper ellipsoid Function Bounds[-65.536,65.536] dim 30 optimum 0.0D ini [32.768,65.536]
 		double aux, result = 0;
 		for (int i = 0; i < inputValues.length; i++) {
             aux = 0;
@@ -75,8 +77,12 @@ public class BenchmarkFunction implements BenchmarkFunctionConstants {
 		return result;
 	}
 
+	/**
+	 * Axis parallel hyper ellipsoid Function Bounds[-5.12,5.12] dim 30 optimum 0.0D ini [2.56,5.12]
+	 * @param inputValues
+	 * @return result of the computation
+	 */
 	private double axisParallelFunction(final double[] inputValues) {
-		//Axis parallel hyper ellipsoid Function Bounds[-5.12,5.12] dim 30 optimum 0.0D ini [2.56,5.12]
 		double result = 0;
 		for (int i = 0; i < inputValues.length; i++) {
             result = result + i * inputValues[i] * inputValues[i];
@@ -84,16 +90,24 @@ public class BenchmarkFunction implements BenchmarkFunctionConstants {
 		return result;
 	}
 
+	/**
+	 * Schaffer Function Bounds[-100,100] dim2 optimum=0D ini [50,100]
+	 * @param inputValues
+	 * @return result of the computation
+	 */
 	private double schafferFunction(final double[] inputValues) {
-		//Schaffer Function Bounds[-100,100] dim2 optimum=0D ini [50,100]
 		return SCHAFFER_HALF + (Math.pow(Math.sin(Math.sqrt(inputValues[0] * inputValues[0] +
 				inputValues[1] * inputValues[1])), SQUARE_VALUE) - SCHAFFER_HALF) /
 				Math.pow(DOUBLE_IDENTITY_VALUE + SCHAFFER_THOUSANDTH * (inputValues[0] * inputValues[0] +
 						inputValues[1] * inputValues[1]), SQUARE_VALUE);
 	}
 
+	/**
+	 * Goldstein Function Bounds[-2,2]  dim2 optimaum=(0,-1) ini[1,2]
+	 * @param inputValues
+	 * @return result of the computation
+	 */
 	private double goldsteinFunction(final double[] inputValues) {
-		//Goldstein Function Bounds[-2,2]  dim2 optimaum=(0,-1) ini[1,2]
 		double result = IDENTITY_VALUE + Math.pow(inputValues[0] + inputValues[1] + 1, SQUARE_VALUE) *
 				(GOLDSTEIN_NINETEEN - GOLDSTEIN_FOURTEEN * inputValues[0] + GOLDSTEIN_THREE * 
 						inputValues[0] * inputValues[0] - GOLDSTEIN_FOURTEEN * inputValues[1] + 
@@ -107,8 +121,12 @@ public class BenchmarkFunction implements BenchmarkFunctionConstants {
 		return result;
 	}
 
+	/**
+	 * Six Hump Camel-back Bounds[-5,5]  dim2 optimum=(-0.0898,0.7126),(0.0898,-0.7126) ini[25,50]
+	 * @param inputValues
+	 * @return result of the computation
+	 */
 	private double sixHumpCamelBackFunction(final double[] inputValues) {
-		//Six Hump Camel-back Bounds[-5,5]  dim2 optimum=(-0.0898,0.7126),(0.0898,-0.7126) ini[25,50]
 		return  SIX_HUMP_CAMEL_BACK_FOUR * Math.pow(inputValues[0], DOUBLE_SQUARE_VALUE) -
 				SIX_HUMP_CAMEL_BACK_FUNCTION_CONST * Math.pow(inputValues[0],
 						SIX_HUMP_CAMEL_BACK_FOUR_DOUBLE) + DOUBLE_IDENTITY_VALUE /
@@ -118,8 +136,12 @@ public class BenchmarkFunction implements BenchmarkFunctionConstants {
 				SIX_HUMP_CAMEL_BACK_FOUR * Math.pow(inputValues[1], SIX_HUMP_CAMEL_BACK_FOUR);
 	}
 
+	/**
+	 * Penalized Function Bounds[-50,50] dim30 optimum=1D ini[25,50]
+	 * @param inputValues
+	 * @return result of the computation
+	 */
 	private double penalizedBenchmarkFunction(final double[] inputValues) {
-		//Penalized Function Bounds[-50,50] dim30 optimum=1D ini[25,50]
 		double aux = 0, result = 0;
 		int i;
 		for (i = 0; i < inputValues.length; i++) {
@@ -139,8 +161,12 @@ public class BenchmarkFunction implements BenchmarkFunctionConstants {
 		return result + aux;
 	}
 
+	/**
+	 * Generalized Rastrigin Function Bounds[-5.12,5.12]; dim30 optimum=0D ini[2.56,5.12]
+	 * @param inputValues
+	 * @return result of the computation
+	 */
 	private double rastriginFunction(final double[] inputValues) {
-		//Generalized Rastrigin Function Bounds[-5.12,5.12]; dim30 optimum=0D ini[2.56,5.12]
 		double aux = 0, result = 0;
 		for (int i = 0; i < inputValues.length; i++) {
             result += Math.pow(inputValues[i], DOUBLE_SQUARE_VALUE);
@@ -150,8 +176,12 @@ public class BenchmarkFunction implements BenchmarkFunctionConstants {
 		return result;
 	}
 
+	/**
+	 * Griewank's Function Bounds[-600,600] dim30 optimum=0D ini[300,600]
+	 * @param inputValues
+	 * @return result of the computation
+	 */
 	private double griewanksFunction(final double[] inputValues) {
-		//Griewank's Function Bounds[-600,600] dim30 optimum=0D ini[300,600]
 		double aux = DOUBLE_IDENTITY_VALUE, result = 0;
 		for (int i = 0; i < inputValues.length; i++) {
             result += Math.pow(inputValues[i], DOUBLE_SQUARE_VALUE);
@@ -162,8 +192,12 @@ public class BenchmarkFunction implements BenchmarkFunctionConstants {
 		return result;
 	}
 
+	/**
+	 * Ackley Function Bounds[-32,32] dim30 optimum=0D ini[16,32]
+	 * @param inputValues
+	 * @return result of the computation
+	 */
 	private double ackleyFunction(final double[] inputValues) {
-		//Ackley Function Bounds[-32,32]   dim30 optimum=0D ini[16,32]
 		double aux = 0, result = 0;
 		for (int i = 0; i < inputValues.length; i++) {
             result += Math.pow(inputValues[i], DOUBLE_SQUARE_VALUE);
@@ -178,8 +212,12 @@ public class BenchmarkFunction implements BenchmarkFunctionConstants {
 		return result;
 	}
 
+	/**
+	 * Generalized Rosenbrock Function Bounds[-30,30]   dim30 optimum=1D ini[15,30]
+	 * @param inputValues
+	 * @return result of the computation
+	 */
 	private double rosenbrockFunction(final double[] inputValues) {
-		//Generalized Rosenbrock Function Bounds[-30,30]   dim30 optimum=1D ini[15,30]
 		double result = 0;
 		for (int i = 0; i < inputValues.length - 1; i++) {
             result = result + ONE_HUNDRED * Math.pow(inputValues[i + 1] - inputValues[i] *
@@ -188,8 +226,12 @@ public class BenchmarkFunction implements BenchmarkFunctionConstants {
 		return result;
 	}
 
+	/**
+	 * Schwefel Function Bounds[-100,100] dim30 optimum=0D ini[50,100]
+	 * @param inputValues
+	 * @return result of the computation
+	 */
 	private double schwefelFunction(final double[] inputValues) {
-		//Schwefel Function Bounds[-100,100] dim30 optimum=0D ini[50,100]
 		double aux, result = 0;
 		for (int i = 0; i < inputValues.length; i++) {
             aux = 0;
@@ -201,8 +243,12 @@ public class BenchmarkFunction implements BenchmarkFunctionConstants {
 		return result;
 	}
 
+	/**
+	 * Sphere Parabola Function Bounds[-100,100] dim30 optimum=0D ini[50,100]
+	 * @param inputValues
+	 * @return result of the computation
+	 */
 	private double sphereParabolaFunction(final double[] inputValues) {
-		//Sphere Parabola Function Bounds[-100,100] dim30 optimum=0D ini[50,100]
 		double result = 0;
 		for (int i = 0; i < inputValues.length; i++) {
             result += Math.pow(inputValues[i], SQUARE_VALUE);
