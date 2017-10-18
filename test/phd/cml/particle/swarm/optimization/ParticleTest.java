@@ -11,12 +11,13 @@ import static org.testng.Assert.*;
 
 public class ParticleTest {
 
-    public static final double EXPECTED_FITNESS_VALUE = 5776089.22265625;
+    private static final double EXPECTED_FITNESS_VALUE = 5776089.22265625;
+    private static double [] VELOCITY_VALUES =  new double[] {2, 4, 3, 6};
+    private static double [] LOCATION_VALUES =  new double[] {1, 7, 2, 9};
+
     private Particle particle;
     private PhysicalMagnitude velocity;
     private PhysicalMagnitude location;
-    private static double [] VELOCITY_VALUES =  new double[] {2, 4, 3, 6};
-    private static double [] LOCATION_VALUES =  new double[] {1, 7, 2, 9};
 
     @BeforeMethod
     public void setUp() {

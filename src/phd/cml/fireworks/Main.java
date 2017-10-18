@@ -10,7 +10,7 @@ public class Main {
 
     public static final String INFORMATION_FILE_PATH_WINDOWS = "D:\\FA_info.txt";
     public static final String INFORMATION_FILE_PATH_UNIX = "FA_info.txt";
-    //public static final String INFORMATION_FILE_PATH_UNIX = "/home/clemen/FA_info.txt"; //for L
+    //public static final String INFORMATION_FILE_PATH_UNIX = "/home/clemen/FA_info.txt"; //for Linux
     public static final int NUMBER_OF_ITERATIONS = 20;
     public static final int LOCATIONS_NUMBER = 5;
     public static final int NUMBER_OF_SPARKS = 50;

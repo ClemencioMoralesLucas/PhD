@@ -4,12 +4,6 @@ package phd.cml.fireworks;
  * Created by Clemencio Morales Lucas.
  */
 
-/**
- * 	TODO Refactor unit tests
- * 	 	DONE A) 'fireworks' package
- * 		TODO B) 'genetic.algorithms' package
- * 		TODO C) 'particle.swarm.optimization' package
- */
 public class BenchmarkFunction implements BenchmarkFunctionConstants {
 
 	private int index;
