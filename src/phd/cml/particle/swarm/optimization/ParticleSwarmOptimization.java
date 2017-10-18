@@ -1,43 +1,25 @@
 package phd.cml.particle.swarm.optimization;
 
+import java.util.Vector;
+import java.util.Random;
+
 /**
  * Created by Clemencio Morales Lucas.
  */
 
-import java.util.Vector;
-import java.util.Random;
-
-public class ParticleSwarmOptimization {
-
-    // With a smaller tolerance, the result is more accurate, but iteration number increases
-    public static final double ERR_TOLERANCE = 1E-20;
-
-    private static final int SWARM_SIZE = 30;
-    private static final int MAX_ITERATION = 100;
-    private static final int PROBLEM_DIMENSION = 2;
-
-    private static final double C1 = 2.0;
-    private static final double C2 = 2.0;
-
-    private static final double W_UPPER_BOUND = 1.0;
-    private static final double W_LOWER_BOUND = 0.0;
+public class ParticleSwarmOptimization implements ParticleSwarmOptimizationConstants {
 
     private Vector<Particle> swarm = new Vector<>();
-
     private double[] pBest = new double[SWARM_SIZE];
     private Vector<Location> pBestLocation = new Vector<>();
-
     private double gBest;
     private Location gBestLocation;
-
     private double[] fitnessValueList = new double[SWARM_SIZE];
-
     private Random random = new Random();
 
     public void execute(final boolean verboseMode) {
         int iteration = 0;
-        double w;
-        double error = 9999;
+        double w, error = 9999;
 
         this.initializeSwarm();
         this.updateFitnessList();
@@ -48,53 +30,20 @@ public class ParticleSwarmOptimization {
         }
 
         while(iteration < MAX_ITERATION && error > ERR_TOLERANCE) {
-            // First action -> Update pBest
-            for(int i=0; i < SWARM_SIZE; i++) {
-                if(fitnessValueList[i] < pBest[i]) {
-                    pBest[i] = fitnessValueList[i];
-                    pBestLocation.set(i, (Location) swarm.get(i).getLocation());
-                }
-            }
-
-            // Second action - Update gBest
-            int bestParticleIndex = getMinimumPosition(fitnessValueList);
-            if(iteration == 0 || fitnessValueList[bestParticleIndex] < gBest) {
-                gBest = fitnessValueList[bestParticleIndex];
-                gBestLocation = (Location) swarm.get(bestParticleIndex).getLocation();
-            }
+            updatePersonalBest();
+            updateGlobalBest(iteration);
 
             w = W_UPPER_BOUND - (((double) iteration) / MAX_ITERATION) * (W_UPPER_BOUND - W_LOWER_BOUND);
 
-            for(int i=0; i<SWARM_SIZE; i++) {
+            for(int i=0; i < SWARM_SIZE; i++) {
                 double r1 = random.nextDouble();
                 double r2 = random.nextDouble();
                 Particle p = swarm.get(i);
-
-                // Third step - Update velocity
-                double[] newVelocity = new double[PROBLEM_DIMENSION];
-
-                newVelocity[0] = (w * p.getVelocity().getValues()[0]) +
-                        (r1 * C1) * (pBestLocation.get(i).getValues()[0] - p.getLocation().getValues()[0]) +
-                        (r2 * C2) * (gBestLocation.getValues()[0] - p.getLocation().getValues()[0]);
-
-                newVelocity[1] = (w * p.getVelocity().getValues()[1]) +
-                        (r1 * C1) * (pBestLocation.get(i).getValues()[1] - p.getLocation().getValues()[1]) +
-                        (r2 * C2) * (gBestLocation.getValues()[1] - p.getLocation().getValues()[1]);
-
-                Velocity vel = new Velocity(newVelocity);
-                p.setVelocity(vel);
-
-                // Fourth step - Update location
-                double[] newLocation = new double[PROBLEM_DIMENSION];
-
-                newLocation[0] = p.getLocation().getValues()[0] + newVelocity[0];
-                newLocation[1] = p.getLocation().getValues()[1] + newVelocity[1];
-
-                Location loc = new Location(newLocation);
-                p.setLocation(loc);
+                double[] newVelocity = updateVelocity(w, i, r1, r2, p);
+                updateLocation(p, newVelocity);
             }
 
-            //Observation: The function ought to be minimized, thus it means it�s getting closer to 0
+            //Observation: The function ought to be minimized, thus it means it's getting closer to 0
             error = Particle.evaluate(gBestLocation) - 0;
 
             if(verboseMode){
@@ -104,33 +53,80 @@ public class ParticleSwarmOptimization {
             iteration++;
             updateFitnessList();
         }
-
         printFinalResults(iteration-1);
+    }
+
+    private double[] updateVelocity(final double w, final int i, final double r1, final double r2,
+                                    final Particle currentParticle) {
+        double[] newVelocity = new double[PROBLEM_DIMENSION];
+
+        newVelocity[0] = (w * currentParticle.getVelocity().getValues()[0]) +
+                (r1 * C1) * (pBestLocation.get(i).getValues()[0] - currentParticle.getLocation().getValues()[0]) +
+                (r2 * C2) * (gBestLocation.getValues()[0] - currentParticle.getLocation().getValues()[0]);
+
+        newVelocity[1] = (w * currentParticle.getVelocity().getValues()[1]) +
+                (r1 * C1) * (pBestLocation.get(i).getValues()[1] - currentParticle.getLocation().getValues()[1]) +
+                (r2 * C2) * (gBestLocation.getValues()[1] - currentParticle.getLocation().getValues()[1]);
+
+        Velocity vel = new Velocity(newVelocity);
+        currentParticle.setVelocity(vel);
+        return newVelocity;
+    }
+
+    private void updateLocation(Particle particle, double[] newVelocity) {
+        double[] newLocation = new double[PROBLEM_DIMENSION];
+
+        newLocation[0] = particle.getLocation().getValues()[0] + newVelocity[0];
+        newLocation[1] = particle.getLocation().getValues()[1] + newVelocity[1];
+
+        final Location location = new Location(newLocation);
+        particle.setLocation(location);
+    }
+
+    private void updateGlobalBest(final int iteration) {
+        int bestParticleIndex = getMinimumPosition(fitnessValueList);
+        if(iteration == 0 || fitnessValueList[bestParticleIndex] < gBest) {
+            gBest = fitnessValueList[bestParticleIndex];
+            gBestLocation = (Location) swarm.get(bestParticleIndex).getLocation();
+        }
+    }
+
+    private void updatePersonalBest() {
+        for(int i=0; i < SWARM_SIZE; i++) {
+            if(fitnessValueList[i] < pBest[i]) {
+                pBest[i] = fitnessValueList[i];
+                pBestLocation.set(i, (Location) swarm.get(i).getLocation());
+            }
+        }
     }
 
     public void initializeSwarm() {
         Particle p;
         for(int i=0; i<SWARM_SIZE; i++) {
             p = new Particle();
-
-            // Random location initialization within the scenario space
-            double[] loc = new double[PROBLEM_DIMENSION];
-
-            loc[0] = Particle.LOCATION_X_LOW + random.nextDouble() * (Particle.LOCATION_X_HIGH - Particle.LOCATION_X_LOW);
-            loc[1] = Particle.LOCATION_Y_LOW + random.nextDouble() * (Particle.LOCATION_Y_HIGH - Particle.LOCATION_Y_LOW);
-            PhysicalMagnitude location = new Location(loc);
-
-            // Random velocity initialization within the scenario range
-            double[] vel = new double[PROBLEM_DIMENSION];
-
-            vel[0] = Particle.VELOCITY_LOW + random.nextDouble() * (Particle.VELOCITY_HIGH - Particle.VELOCITY_LOW);
-            vel[1] = Particle.VELOCITY_LOW + random.nextDouble() * (Particle.VELOCITY_HIGH - Particle.VELOCITY_LOW);
-            PhysicalMagnitude velocity = new Velocity(vel);
+            PhysicalMagnitude location = randomLocationInitialization();
+            PhysicalMagnitude velocity = randomVelocityInitialization();
 
             p.setLocation(location);
             p.setVelocity(velocity);
             swarm.add(p);
         }
+    }
+
+    private PhysicalMagnitude randomVelocityInitialization() {
+        double[] vel = new double[PROBLEM_DIMENSION];
+
+        vel[0] = Particle.VELOCITY_LOW + random.nextDouble() * (Particle.VELOCITY_HIGH - Particle.VELOCITY_LOW);
+        vel[1] = Particle.VELOCITY_LOW + random.nextDouble() * (Particle.VELOCITY_HIGH - Particle.VELOCITY_LOW);
+        return new Velocity(vel);
+    }
+
+    private PhysicalMagnitude randomLocationInitialization() {
+        double[] loc = new double[PROBLEM_DIMENSION];
+
+        loc[0] = Particle.LOCATION_X_LOW + random.nextDouble() * (Particle.LOCATION_X_HIGH - Particle.LOCATION_X_LOW);
+        loc[1] = Particle.LOCATION_Y_LOW + random.nextDouble() * (Particle.LOCATION_Y_HIGH - Particle.LOCATION_Y_LOW);
+        return new Location(loc);
     }
 
     public void updateFitnessList() {
@@ -141,24 +137,23 @@ public class ParticleSwarmOptimization {
 
     private void printCurrentResults(final int iterationNumber) {
         System.out.println();
-        System.out.println("Iteration #" + iterationNumber + ": ");
-        System.out.println("  --> Best X value: " + gBestLocation.getValues()[0]);
-        System.out.println("  --> Best Y value: " + gBestLocation.getValues()[1]);
-        System.out.println("  --> Evaluation value: " + Particle.evaluate(gBestLocation));
+        System.out.println(ITERATION_NUMBER_MESSAGE + iterationNumber + COLON_SEPARATOR);
+        System.out.println(BEST_X_VALUE_MESSAGE + gBestLocation.getValues()[0]);
+        System.out.println(BEST_Y_VALUE_MESSAGE + gBestLocation.getValues()[1]);
+        System.out.println(EVALUATION_VALUE_MESSAGE + Particle.evaluate(gBestLocation));
     }
 
     private void printFinalResults(final int iterationNumber){
         System.out.println();
-        System.out.println("-------------------------------------------------");
-        System.out.println("Solution found at Iteration #" + (iterationNumber) + ". Values:");
-        System.out.println("  ====> Best X: " + gBestLocation.getValues()[0]);
-        System.out.println("  ====> Best Y: " + gBestLocation.getValues()[1]);
+        System.out.println(SEPARATOR);
+        System.out.println(SOLUTION_FOUND_AT_ITERATION_MESSAGE + (iterationNumber) + VALUES_MESSAGE);
+        System.out.println(BEST_X_MESSAGE + gBestLocation.getValues()[0]);
+        System.out.println(BEST_Y_MESSAGE + gBestLocation.getValues()[1]);
     }
 
     public static int getMinimumPosition(double[] list) {
         int pos = 0;
         double minValue = list[0];
-
         for(int i=0; i < list.length; i++) {
             if(list[i] < minValue) {
                 pos = i;
