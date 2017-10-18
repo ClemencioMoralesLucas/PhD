@@ -22,7 +22,8 @@ public class Main {
     public static final String SHIFT = "|Shift ";
     public static final String SEPARATOR = "|\t";
     public static final String FITNESS = "|Fitness ";
-    public static final String OUTPUT_SEPARATOR = "====================================================================================================================";
+    public static final String OUTPUT_SEPARATOR = "====================================================================" +
+            "================================================";
 
     public enum HostSystem { WINDOWS, UNIX }
 
@@ -87,8 +88,8 @@ public class Main {
                 benchmarkFunction.setIndexAndShift(i, availableBounds[i - 1] * shiftIndex[k]);
                 double avg = 0;
                 for (int t = 0; t < NUMBER_OF_ITERATIONS; t++) {
-                    ImprovedFireworkAlgorithm improvedFireworkAlgorithm = new ImprovedFireworkAlgorithm(LOCATIONS_NUMBER, NUMBER_OF_SPARKS,
-                            LOW_BOUND_NUMBER, HIGH_BOUND_NUMBER, MAXIMUM_AMPLITUDE_VALUE, GAUSSIAN_SPARKS_VALUE,
+                    ImprovedFireworkAlgorithm improvedFireworkAlgorithm = new ImprovedFireworkAlgorithm(LOCATIONS_NUMBER,
+                            NUMBER_OF_SPARKS, LOW_BOUND_NUMBER, HIGH_BOUND_NUMBER, MAXIMUM_AMPLITUDE_VALUE, GAUSSIAN_SPARKS_VALUE,
                             maximumBound, minimumBound, filePath, benchmarkFunction);
                     avg += improvedFireworkAlgorithm.launch();
                 }
@@ -107,18 +108,16 @@ public class Main {
         System.out.println();
     }
 
-    //TODO MARTES 1: seguir esquema roughly de abajo y meter optimización con inicialización previa aleatoria
-    //TODO MARTES 2: Ver resultados
-    //TODO 3: Ver como meter http://codingjunkie.net/micro-benchmarking-with-caliper/ y si no, BBOB (si no es posible al usar Java, hacerlo a mano)
     public static void main(String[] args) throws FileNotFoundException {
         for (int i = 0; i < 20; i++) {
-            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++ "+i+"+++++++++++++++++++++++++++++++++++++++++++++++");
+            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++ "+i+"++++++++++++++++++++++++++++++++" +
+                    "+++++++++++++++");
             new Main().launch(HostSystem.WINDOWS, false);
             new Main().launch(HostSystem.WINDOWS, true);
         }
-        System.out.println("----------------------------------------------------HARDWARE WARMUP PHASE ENDED---------------------------------------------------------------");
+        System.out.println("----------------------------------------------------HARDWARE WARMUP PHASE ENDED------------" +
+                "---------------------------------------------------");
 
-        //TODO Find a way of reformatting the table
         HostSystem hostSystem = HostSystem.UNIX;
         long initialTime = System.nanoTime();
         new Main().launch(hostSystem, false);
@@ -128,7 +127,6 @@ public class Main {
         System.out.println("Time elapsed for current algorithm (ns): "+ timeWithoutImprovement);
         System.out.println(OUTPUT_SEPARATOR);
 
-        //TODO We can go this way roughly
         long initialTimeImp = System.nanoTime();
         new Main().launch(hostSystem, true);
         long finalTimeImp = System.nanoTime();
@@ -136,10 +134,12 @@ public class Main {
         System.out.println(OUTPUT_SEPARATOR);
         System.out.println("Time elapsed for improved algorithm (ns): "+ timeWithImprovement);
 
-        System.out.println("===================================================RESULTS==========================================================");
+        System.out.println("===================================================RESULTS=================================" +
+                "=========================");
         //Ahmdal's Acceleration Formula = timeWithoutImprovement/timeWithImprovement;
         final double ahmdalAcceleration = ((double)timeWithoutImprovement/timeWithImprovement)*100;
-        System.out.println("Ahmdal's Law = Non-Improved time /  Improved Time = " + timeWithoutImprovement + "/" + timeWithImprovement + " = " + ahmdalAcceleration);
+        System.out.println("Ahmdal's Law = Non-Improved time /  Improved Time = " + timeWithoutImprovement + "/" +
+                timeWithImprovement + " = " + ahmdalAcceleration);
         printResultsDependingOnAhmdalsAcceleration(ahmdalAcceleration);
     }
 

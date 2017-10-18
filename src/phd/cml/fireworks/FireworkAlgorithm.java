@@ -7,23 +7,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 
-/**
- * Created by Clemencio Morales Lucas.
- */
-
-//TODO: Refactor all and then extract every single snippet of code under comments like "explode" to a method called like that (give a go to the whole code)
-public class FireworkAlgorithm {
-
-    private static final double EPS_VALUE = 1e-38;
-    private static final double QUARTER = 0.25;
-    private static final double HALF = 0.5;
-    private static final int DOUBLE_COEFFICIENT = 2;
-    private static final double GAUSSIAN_COEFFICIENT_BASE = 1.0;
-    private static final String BEST_VALUE_FOUND = "Best value found ==> ";
-    private static final String BEST_POSITION_FOUND = "best position found ==> ";
-    private static final String SEPARATOR = "---------------------------------------------------------";
-    private static final String OUTPUT_FILE_NOT_FOUND_IN_PATH = ": Output file not found in:";
-    public static final int NUMBER_OF_FUNCTION_EVALUATIONS = 30;
+public class FireworkAlgorithm implements FireworkAlgorithmConstants {
 
     private Spark[] fireworks;
     private Spark[][] sparks;
@@ -86,7 +70,6 @@ public class FireworkAlgorithm {
 
     private void setOffNFireworks() {
         numGenerations++;
-        //get max(worst) and min(best) value
         double maximumValue = fireworks[0].getValue(benchmarkFunction);
         double minimumValue = fireworks[0].getValue(benchmarkFunction);
         int i;
@@ -125,11 +108,9 @@ public class FireworkAlgorithm {
         Random rand;
         for (k = 0; k < gaussianSparksNumber; k++) {
             gaussianSparks[k] = new Spark();
-            //randomly select a firework
             rand = new Random();
             i = Math.abs(rand.nextInt()) % locationsNumber;
             fireworkPosition = fireworks[i].getPosition();
-            //select z directions
             boolean[] randFlag = new boolean[dimension];
             Arrays.fill(randFlag, false);
 
@@ -144,7 +125,6 @@ public class FireworkAlgorithm {
                 }
             }
 
-            //Gaussian Explosion (different explode)
             double gaussianCoefficient = GAUSSIAN_COEFFICIENT_BASE + rand.nextGaussian();
             for (j = 0; j < dimension; j++) {
                 if (randFlag[j]) {
@@ -189,9 +169,7 @@ public class FireworkAlgorithm {
                         randomCount++;
                     }
                 }
-                //explode
                 explode(explosionAmplitude[i], temporalPosition, fireworkPosition, randomFlag);
-                //set position of the spark
                 sparks[i][k].setPosition(temporalPosition);
             }
         }
@@ -376,7 +354,6 @@ public class FireworkAlgorithm {
     }
 
     private Spark selectBestLocation() {
-        //select the best location
         Spark bestSpark = fireworks[0];
         int i, j;
         for (i = 1; i < locationsNumber; i++) {
@@ -403,7 +380,7 @@ public class FireworkAlgorithm {
     private boolean stopCriteria() {
         //if(numGenerations < 2000) {
         boolean success;
-        if (numFunctionEvaluations < NUMBER_OF_FUNCTION_EVALUATIONS) { //Readme: This const defines the iterations of the algorithm. 300000 - 400000 are reliable values
+        if (numFunctionEvaluations < NUMBER_OF_FUNCTION_EVALUATIONS) {
             success = false;
         } else {
             //System.out.println("numGenerations=" + numGenerations + ",numFunctionEvaluations=" + numFunctionEvaluations);

@@ -8,18 +8,7 @@ import java.util.Random;
  * Created by Clemencio Morales Lucas.
  */
 
-public class ImprovedFireworkAlgorithm {
-
-    private static final double EPS_VALUE = 1e-38;
-    private static final double QUARTER = 0.25;
-    private static final double HALF = 0.5;
-    private static final int DOUBLE_COEFFICIENT = 2;
-    private static final double GAUSSIAN_COEFFICIENT_BASE = 1.0;
-    private static final String BEST_VALUE_FOUND = "Best value found ==> ";
-    private static final String BEST_POSITION_FOUND = "best position found ==> ";
-    private static final String SEPARATOR = "---------------------------------------------------------";
-    private static final int NUMBER_OF_FUNCTION_EVALUATIONS = 30;
-    private static final String LINE_BREAK = "\n";
+public class ImprovedFireworkAlgorithm implements FireworkAlgorithmConstants {
 
     private Spark[] fireworks;
     private Spark[][] sparks;

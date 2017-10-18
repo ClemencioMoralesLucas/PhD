@@ -7,6 +7,9 @@ package phd.cml.fireworks;
 //TODO LIST
 /**
  * TODO 1 Refactor the whole code (code and tests)*
+ * 		DONE A) 'fireworks' package
+ * 		todo B) 'genetic.algorithms' package
+ * 		todo C) 'particle.swarm.optimization' package
  */
 public class BenchmarkFunction implements BenchmarkFunctionConstants {
 
