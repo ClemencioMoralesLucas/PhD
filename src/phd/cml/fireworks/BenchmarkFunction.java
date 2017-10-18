@@ -6,7 +6,7 @@ package phd.cml.fireworks;
 
 /**
  * 	TODO Refactor unit tests
- * 	 	TODO A) 'fireworks' package
+ * 	 	DONE A) 'fireworks' package
  * 		TODO B) 'genetic.algorithms' package
  * 		TODO C) 'particle.swarm.optimization' package
  */
