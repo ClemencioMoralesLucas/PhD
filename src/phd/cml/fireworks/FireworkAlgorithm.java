@@ -11,13 +11,13 @@ public class FireworkAlgorithm implements FireworkAlgorithmConstants {
 
     private Spark[] fireworks;
     private Spark[][] sparks;
-    private Spark[] gaussianSparks;
+    private Spark[] auxSparks;
     private int locationsNumber;
     private int maximumSparksNumber;
     private double lowBound;
     private double highBound;
     private double maximumAmplitudeNumber;
-    private int gaussianSparksNumber;
+    private int auxSparksNumber;
     private double[] maximumBound;
     private double[] minimalBound;
     private int dimension;
@@ -28,7 +28,7 @@ public class FireworkAlgorithm implements FireworkAlgorithmConstants {
     BenchmarkFunction benchmarkFunction;
 
     public FireworkAlgorithm(final int locationsNumber, final int maximumSparksNumber, final double lowBound,
-                             final double highBound, final double maximumAmplitudeNumber, final int gaussianSparksNumber,
+                             final double highBound, final double maximumAmplitudeNumber, final int auxSparksNumber,
                              final double[] maximumBound, final double[] minimalBound, final String infoFilePath,
                              final BenchmarkFunction benchmarkFunction) {
         this.locationsNumber = locationsNumber;
@@ -36,7 +36,7 @@ public class FireworkAlgorithm implements FireworkAlgorithmConstants {
         this.lowBound = lowBound;
         this.highBound = highBound;
         this.maximumAmplitudeNumber = maximumAmplitudeNumber;
-        this.gaussianSparksNumber = gaussianSparksNumber;
+        this.auxSparksNumber = auxSparksNumber;
         this.maximumBound = maximumBound;
         this.minimalBound = minimalBound;
         this.dimension = this.maximumBound.length;
@@ -97,17 +97,17 @@ public class FireworkAlgorithm implements FireworkAlgorithmConstants {
         sparks = new Spark[locationsNumber][];
         double[] temporalPosition = generateSparksForAllFireworks(sparksNumber, explosionAmplitude);
 
-        gaussianSparks = new Spark[gaussianSparksNumber];
-        gaussianExplode(temporalPosition);
+        auxSparks = new Spark[auxSparksNumber];
+        explode(temporalPosition);
     }
 
-    private void gaussianExplode(double[] temporalPosition) {
+    private void explode(double[] temporalPosition) {
         int i;
         double[] fireworkPosition;
         int k, j;
         Random rand;
-        for (k = 0; k < gaussianSparksNumber; k++) {
-            gaussianSparks[k] = new Spark();
+        for (k = 0; k < auxSparksNumber; k++) {
+            auxSparks[k] = new Spark();
             rand = new Random();
             i = Math.abs(rand.nextInt()) % locationsNumber;
             fireworkPosition = fireworks[i].getPosition();
@@ -125,10 +125,10 @@ public class FireworkAlgorithm implements FireworkAlgorithmConstants {
                 }
             }
 
-            double gaussianCoefficient = GAUSSIAN_COEFFICIENT_BASE + rand.nextGaussian();
+            double coefficient = COEFFICIENT_BASE + rand.nextGaussian();
             for (j = 0; j < dimension; j++) {
                 if (randFlag[j]) {
-                    temporalPosition[j] = fireworkPosition[j] * gaussianCoefficient;
+                    temporalPosition[j] = fireworkPosition[j] * coefficient;
                     if (temporalPosition[j] < minimalBound[j] || temporalPosition[j] > maximumBound[j]) {
                         double abspos = Math.abs(temporalPosition[j]);
                         while (abspos >= 0) {
@@ -141,7 +141,7 @@ public class FireworkAlgorithm implements FireworkAlgorithmConstants {
                     temporalPosition[j] = fireworkPosition[j];
                 }
             }
-            gaussianSparks[k].setPosition(temporalPosition);
+            auxSparks[k].setPosition(temporalPosition);
         }
     }
 
@@ -265,9 +265,9 @@ public class FireworkAlgorithm implements FireworkAlgorithmConstants {
                 continue;
             }
 
-            for (i = 0; i < gaussianSparksNumber; i++) {
+            for (i = 0; i < auxSparksNumber; i++) {
                 if (index == nextLocations[k]) {
-                    nextFireworks[k] = gaussianSparks[i];
+                    nextFireworks[k] = auxSparks[i];
                     break;
                 }
                 index++;
@@ -312,7 +312,7 @@ public class FireworkAlgorithm implements FireworkAlgorithmConstants {
         double[] cumulativeProbability = new double[fireworkSparksNumber];
         for (i = 0; i < fireworkSparksNumber; i++) {
             if (sumOfProbability < EPS_VALUE) {
-                probabilityOfSelection[i] = GAUSSIAN_COEFFICIENT_BASE / fireworkSparksNumber;
+                probabilityOfSelection[i] = COEFFICIENT_BASE / fireworkSparksNumber;
             } else {
                 probabilityOfSelection[i] /= sumOfProbability;
             }
@@ -335,8 +335,8 @@ public class FireworkAlgorithm implements FireworkAlgorithmConstants {
                 index++;
             }
         }
-        for (i = 0; i < gaussianSparksNumber; i++) {
-            fireworkAndSparksPositions[index] = gaussianSparks[i].getPosition();
+        for (i = 0; i < auxSparksNumber; i++) {
+            fireworkAndSparksPositions[index] = auxSparks[i].getPosition();
             index++;
         }
         return fireworkAndSparksPositions;
@@ -344,7 +344,7 @@ public class FireworkAlgorithm implements FireworkAlgorithmConstants {
 
     private int calculateNumberOfFireworksAndSparks() {
         int i, j;
-        int fireworkSparksNumber = locationsNumber + gaussianSparksNumber;
+        int fireworkSparksNumber = locationsNumber + auxSparksNumber;
         for (i = 0; i < locationsNumber; i++) {
             for (j = 0; j < sparks[i].length; j++) {
                 fireworkSparksNumber++;
@@ -368,9 +368,9 @@ public class FireworkAlgorithm implements FireworkAlgorithmConstants {
                 }
             }
         }
-        for (i = 0; i < gaussianSparksNumber; i++) {
-            if (gaussianSparks[i].getValue(benchmarkFunction) < bestSpark.getValue(benchmarkFunction)) {
-                bestSpark = gaussianSparks[i];
+        for (i = 0; i < auxSparksNumber; i++) {
+            if (auxSparks[i].getValue(benchmarkFunction) < bestSpark.getValue(benchmarkFunction)) {
+                bestSpark = auxSparks[i];
             }
         }
         optimumValue = bestSpark.getValue(benchmarkFunction);

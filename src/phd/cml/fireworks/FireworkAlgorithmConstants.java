@@ -10,7 +10,7 @@ public interface FireworkAlgorithmConstants {
     double QUARTER = 0.25;
     double HALF = 0.5;
     int DOUBLE_COEFFICIENT = 2;
-    double GAUSSIAN_COEFFICIENT_BASE = 1.0;
+    double COEFFICIENT_BASE = 1.0;
     String BEST_VALUE_FOUND = "Best value found ==> ";
     String BEST_POSITION_FOUND = "best position found ==> ";
     String SEPARATOR = "---------------------------------------------------------";
